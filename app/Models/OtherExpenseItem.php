@@ -21,7 +21,9 @@ class OtherExpenseItem extends Model
     protected static function booted()
     {
         static::creating(function ($model) {
-            $model->center_id = Auth::user()->center_id;
+            if (Auth::check()) {
+                $model->center_id = Auth::user()->center_id;
+            }
         });
     }
 

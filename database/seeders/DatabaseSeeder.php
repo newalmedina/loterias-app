@@ -19,14 +19,14 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\User::factory()->create([
             'name' => 'Administrador',
-            'email' => 'el.solitions@gmail.com',
-            'password' => Hash::make("EithanSteven15    *"),
+            'email' => 'ing.newal.medina@gmail.com',
+            'password' => Hash::make("Secret15"),
         ]);
 
         $this->call(UnitOfMeasureSeeder::class);
         $this->call(SettingDataSeeder::class);
-        $this->call(CategoryDataSeeder::class);
-        $this->call(CmsContentSeeder::class);
+        // $this->call(CategoryDataSeeder::class);
+        // $this->call(CmsContentSeeder::class);
         /* $this->call(InsertDataSeeder::class);
         $this->call(UnitOfMeasureSeeder::class);
         $this->call(BrandDataSeeder::class);
@@ -37,6 +37,6 @@ class DatabaseSeeder extends Seeder
         $this->call(InsertItemsSeeder::class);
         $this->call(OrderSeeder::class);
         $this->call(OtherExpenseSeeder::class);*/
-        $this->call(WorldTableSeeder::class);
+        // $this->call(WorldTableSeeder::class);
     }
 }
