@@ -279,12 +279,12 @@ class UserResource extends Resource
                         '1' => 'Activo',
                         '0' => 'No activo',
                     ]),
-                SelectFilter::make('can_appointment')
-                    ->label("¿Permir cita?")
-                    ->options([
-                        '1' => 'Si',
-                        '0' => 'No',
-                    ]),
+                // SelectFilter::make('can_appointment')
+                //     ->label("¿Permir cita?")
+                //     ->options([
+                //         '1' => 'Si',
+                //         '0' => 'No',
+                //     ]),
                 SelectFilter::make('can_admin_panel')
                     ->label("¿Permir Ingresar administración?")
                     ->options([
