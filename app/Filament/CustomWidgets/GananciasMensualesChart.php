@@ -48,7 +48,7 @@ class GananciasMensualesChart extends ChartWidget
     {
         $year = $this->filter ?? now()->year;
 
-
+        return [];
         $ventasPorMes = Order::sales()->myCenter()
             ->invoiced()
             ->whereYear('date', $year)

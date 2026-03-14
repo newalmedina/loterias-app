@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Models;
+
+use Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Loterie extends Model
+{
+    use HasFactory;
+    // Permitimos llenado masivo de todos los campos
+    protected $guarded = ["id"];
+    // Casts para booleans y horas
+    protected $casts = [
+        'active' => 'boolean',
+        'lunes_disponible' => 'boolean',
+        'martes_disponible' => 'boolean',
+        'miercoles_disponible' => 'boolean',
+        'jueves_disponible' => 'boolean',
+        'viernes_disponible' => 'boolean',
+        'sabado_disponible' => 'boolean',
+        'domingo_disponible' => 'boolean',
+
+        // Horas de fin
+        'lunes_hora_fin' => 'datetime:H:i',
+        'martes_hora_fin' => 'datetime:H:i',
+        'miercoles_hora_fin' => 'datetime:H:i',
+        'jueves_hora_fin' => 'datetime:H:i',
+        'viernes_hora_fin' => 'datetime:H:i',
+        'sabado_hora_fin' => 'datetime:H:i',
+        'domingo_hora_fin' => 'datetime:H:i',
+    ];
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+
+
+            if (empty($model->code)) {
+
+                // Generar código único de 5 dígitos
+                do {
+                    $code = random_int(10000, 99999);
+                } while (self::where('code', $code)->exists());
+
+                $model->code = $code;
+            }
+        });
+    }
+
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
+    }
+
+    public function centerLoteries()
+    {
+        return $this->hasMany(CenterLoterie::class);
+    }
+    public function centers()
+    {
+        return $this->belongsToMany(Center::class, 'center_loteries')
+            ->withPivot(['active', 'min_bloqueo'])
+            ->withTimestamps();
+    }
+}

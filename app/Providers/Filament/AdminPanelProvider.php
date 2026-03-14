@@ -61,7 +61,9 @@ class AdminPanelProvider extends PanelProvider
             ->maxContentWidth(MaxWidth::Full)
             ->id('admin')
             ->path('admin')
-            ->login()
+            // ->login()
+            ->login(\App\Filament\Pages\Login::class)
+
             ->passwordReset(RequestPasswordReset::class)
             ->colors([
 
@@ -86,8 +88,11 @@ class AdminPanelProvider extends PanelProvider
                 //     ]),
                 FilamentAuthenticationLogPlugin::make(),
                 // FilamentSpatieLaravelBackupPlugin::make()
+                // FilamentSpatieLaravelBackupPlugin::make()
+                //     ->usingPage(Backups::class)->authorize(fn(): bool => auth()->user()->super_admin),
                 FilamentSpatieLaravelBackupPlugin::make()
-                    ->usingPage(Backups::class)->authorize(fn(): bool => auth()->user()->super_admin),
+                    ->usingPage(Backups::class)
+                    ->authorize(fn(): bool => auth()->check() && auth()->user()->super_admin),
                 FilamentFullCalendarPlugin::make()->config([
                     'initialView' => 'timeGridWeek', // 👈 Vista por defecto: semana
                     'headerToolbar' => [
@@ -108,19 +113,19 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 //Widgets\FilamentInfoWidget::class,
-                VentasStats::class,
-                // OtherExpensesStats::class,
-                VentasMensualesChart::class,
-                // OtherExpensesChart::class,
-                GananciasMensualesChart::class,
-                VentasPorVendedorPieChart::class,
-                VentasPorVendedorPercentPieChart::class,
-                // GastosPieChart::class,
-                GastosPercentPieChart::class,
-                ProductosMasVendido::class,
-                ProductosMasVendidoPorcentaje::class,
-                ProductosMenosVendido::class,
-                ProductosMenosVendidoPorcentaje::class,
+                // VentasStats::class,
+                // // OtherExpensesStats::class,
+                // VentasMensualesChart::class,
+                // // OtherExpensesChart::class,
+                // GananciasMensualesChart::class,
+                // VentasPorVendedorPieChart::class,
+                // VentasPorVendedorPercentPieChart::class,
+                // // GastosPieChart::class,
+                // GastosPercentPieChart::class,
+                // ProductosMasVendido::class,
+                // ProductosMasVendidoPorcentaje::class,
+                // ProductosMenosVendido::class,
+                // ProductosMenosVendidoPorcentaje::class,
                 // VentasVsGastosPorDiaChart::class
             ])
             ->middleware([

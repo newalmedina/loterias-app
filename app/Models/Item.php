@@ -85,7 +85,6 @@ class Item extends Model
         return Storage::url($path);
     }
 
-
     public function scopeActive($query)
     {
         return $query->where('active', true);

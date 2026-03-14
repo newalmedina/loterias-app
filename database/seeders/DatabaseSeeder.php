@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory()->create([
             'name' => 'Administrador',
             'email' => 'ing.newal.medina@gmail.com',
+            'super_admin' => 1,
+            'can_admin_panel' => 1,
+            'change_password' => 0,
             'password' => Hash::make("Secret15"),
         ]);
 
@@ -37,6 +40,8 @@ class DatabaseSeeder extends Seeder
         $this->call(InsertItemsSeeder::class);
         $this->call(OrderSeeder::class);
         $this->call(OtherExpenseSeeder::class);*/
+        $this->call(CenterSeeder::class);
+        $this->call(LoteriasSeeder::class);
         $this->call(WorldTableSeeder::class);
     }
 }

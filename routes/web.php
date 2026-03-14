@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BackupDownloadController;
+use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\FrontBookingController;
 use App\Http\Controllers\WelcomeController;
 use App\Models\Order;
@@ -19,6 +20,12 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
+Route::middleware('auth')->group(function () {
+    Route::get('change-password', [ChangePasswordController::class, 'showForm'])
+        ->name('change-password.form');
+    Route::post('change-password', [ChangePasswordController::class, 'updatePassword'])
+        ->name('change-password.update');
+});
 Route::get('/contador', function () {
     return view('contador'); // 👈 una vista blade donde llamamos al componente
 })->name('contador');

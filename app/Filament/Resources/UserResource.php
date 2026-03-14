@@ -119,13 +119,17 @@ class UserResource extends Resource
                                                 ? new HtmlString('<span style="color:#00B5D8">El campo solo se actualizará si ingresas un nuevo valor.</span>')
                                                 : null) // Muestra la leyenda en modo edición
                                         ,
+                                        Forms\Components\Toggle::make('change_password')
+                                            ->inline(false)
+                                            ->label("Forzar cambio contraseña?")
+                                            ->required(),
                                         Forms\Components\Toggle::make('active')
                                             ->inline(false)
                                             ->label("¿Activo?")
                                             ->required(),
-                                        Forms\Components\Toggle::make('can_appointment')
+                                        Forms\Components\Toggle::make('can_sales')
                                             ->inline(false)
-                                            ->label("¿Permir cita?")
+                                            ->label("¿Permir venta loteria?")
                                             ->required(),
                                         Forms\Components\Toggle::make('can_admin_panel')
                                             ->inline(false)
@@ -237,9 +241,9 @@ class UserResource extends Resource
                 Tables\Columns\IconColumn::make('active')
                     ->boolean()
                     ->label("¿Activo?"),
-                Tables\Columns\IconColumn::make('can_appointment')
+                Tables\Columns\IconColumn::make('can_sales')
                     ->boolean()
-                    ->label("¿Permir cita?"),
+                    ->label("¿Permir venta loterias?"),
                 Tables\Columns\IconColumn::make('can_admin_panel')
                     ->boolean()
                     ->label("¿Permir Administración?"),

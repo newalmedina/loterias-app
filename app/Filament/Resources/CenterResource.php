@@ -9,12 +9,14 @@ use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
 use App\Models\Customer;
+use App\Models\Loterie;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Actions;
 
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -27,9 +29,13 @@ use Illuminate\Support\Collection;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Forms\Components\Markdown;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\Storage;
 
 class CenterResource extends Resource
 {
@@ -151,136 +157,108 @@ class CenterResource extends Resource
 
                                     ]),
 
-                                Tabs\Tab::make('Configuración Amovens Mail')
+                                Tabs\Tab::make('Loterias')
                                     ->schema([
                                         Grid::make(2)
                                             ->schema([
-                                                // Actions::make([
-                                                //     FormAction::make('generateGoogleToken')
-                                                //         ->label('Generar Token')
-                                                //         ->icon('heroicon-o-key')
-                                                //         ->color('primary')
-                                                //         ->visible(fn($record) => $record && $record->mail_source === 'Gmail')
-                                                //         ->url(fn($record) => route('google.authorize', ['center' => $record->id]))
-                                                //         ->openUrlInNewTab() // ⚡ esto abre en otra pestaña
-                                                // ])->columnSpan([
-                                                //     'default' => 12, // móvil
-                                                // ]),
+                                                Repeater::make('centerLoteries')
+                                                    ->label('LOTERIAS DISPONIBLES')
+                                                    ->relationship()
+                                                    ->columnSpanFull()
+                                                    ->schema([
+                                                        // Campo de imagen NO editable
 
-                                                // Forms\Components\Select::make('mail_source')
-                                                //     ->label('Origen del correo')
-                                                //     ->columnSpan([
-                                                //         'default' => 12, // móvil
-                                                //         'md' => 1,       // escritorio
-                                                //     ])
-                                                //     ->options([
-                                                //         'Gmail' => 'Gmail',
-                                                //         'Outlook' => 'Outlook',
-                                                //     ])
-                                                //     ->default('Gmail')
-                                                //     ->required()
-                                                //     ->reactive(), // ⚡ importante: hace que los cambios se reflejen dinámicamente
+                                                        // Placeholder::make('imagen_loteria')
+                                                        //     ->columnSpanFull()
+                                                        //     ->content(function (Get $get) {
+                                                        //         $loterie = \App\Models\Loterie::find($get('loterie_id')); // busca la lotería relacionada
+                                                        //         if (!$loterie || !$loterie->image) {
+                                                        //             return ''; // no hay imagen
+                                                        //         }
 
+                                                        //         $url = Storage::disk('public')->url($loterie->image);
 
+                                                        //         return "<img src='{$url}' style='width:50px; height:50px; border-radius:50%; display:block; margin-bottom:5px;' />";
+                                                        //     }),
+                                                        Placeholder::make('imagen_loteria')
+                                                            ->label('')
+                                                            ->columnSpanFull()
+                                                            ->content(function ($get) {
+                                                                $loterie = Loterie::find($get('loterie_id'));
+                                                                if (!$loterie || !$loterie->image) return '';
+                                                                $url = Storage::disk('public')->url($loterie->image);
+                                                                return view('components.loteria-imagen', [
+                                                                    'url' => $url,
+                                                                    'nombre' => $loterie->nombre,
+                                                                ]);
+                                                            }),
 
-                                                Toggle::make('mail_enable_integration')
-                                                    ->label('¿Habilitar integración de correo?')
-                                                    ->columnSpan([
-                                                        'default' => 12, // móvil
-                                                        'md' => 6,       // escritorio
+                                                        Select::make('loterie_id')
+                                                            ->label('Lotería')
+                                                            ->options(
+                                                                Loterie::active()
+                                                                    ->orderBy('nombre', 'asc')   // Orden alfabético
+                                                                    ->pluck('nombre', 'id')
+                                                            )
+                                                            ->searchable()
+                                                            ->required()
+                                                            ->live()
+                                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+
+                                                        TextInput::make('maximo_soportado')
+                                                            ->label('Monto máximo soportado por numero (€)')
+                                                            ->numeric()->required()
+                                                            ->default(99),
+
+                                                        TextInput::make('min_bloqueo')
+                                                            ->label('Minutos Bloqueo cierre')
+                                                            ->numeric()->required()
+                                                            ->default(10),
+
+                                                        Toggle::make('active')
+                                                            ->label('¿Activo?')
+                                                            ->inline(false)
+                                                            ->default(true),
+
+                                                        Placeholder::make('horarios')
+                                                            ->label('Horarios y días disponibles')
+                                                            ->columnSpanFull()
+                                                            ->content(function (Get $get) {
+                                                                $loterie = Loterie::find($get('loterie_id'));
+
+                                                                if (!$loterie) {
+                                                                    return 'Selecciona una lotería para ver horarios';
+                                                                }
+
+                                                                $dias = [
+                                                                    'lunes' => 'Lunes',
+                                                                    'martes' => 'Martes',
+                                                                    'miercoles' => 'Miércoles',
+                                                                    'jueves' => 'Jueves',
+                                                                    'viernes' => 'Viernes',
+                                                                    'sabado' => 'Sábado',
+                                                                    'domingo' => 'Domingo',
+                                                                ];
+
+                                                                $output = '';
+
+                                                                foreach ($dias as $key => $nombre) {
+                                                                    if ($loterie->{$key . '_disponible'}) {
+                                                                        $hora = $loterie->{$key . '_hora_fin'}
+                                                                            ? Carbon::parse($loterie->{$key . '_hora_fin'})->format('H:i')
+                                                                            : '-';
+                                                                        $output .= "✅ {$nombre} - Cierre: {$hora}\n";
+                                                                    } else {
+                                                                        $output .= "❌ {$nombre} - No disponible\n";
+                                                                    }
+                                                                }
+
+                                                                return $output;
+                                                            }),
                                                     ])
-                                                    ->inline(false)
-                                                    ->default(false),
-                                                Toggle::make('enable_start_message')
-                                                    ->label('¿Activar mensaje inicio alquiler?')
-                                                    ->columnSpan([
-                                                        'default' => 12,
-                                                        'md' => 6,
-                                                    ])
-                                                    ->inline(false)
-                                                    ->default(false)
-                                                    ->reactive(), // <-- hace que otros campos reaccionen al cambio
-
-                                                // TinyEditor::make('start_message')
-                                                //     ->label("Mensaje antes alquiler")
-                                                //     ->fileAttachmentsDisk('public')
-                                                //     ->fileAttachmentsVisibility('public')
-                                                //     ->fileAttachmentsDirectory('uploads')
-                                                //     ->profile('default')
-                                                //     ->columnSpan('full')
-                                                //     ->required(fn($get) => $get('enable_start_message')) // obligatorio solo si toggle es true
-                                                //     ->reactive(), // <-- importante para que muestre validación en tiempo real
-
-                                                Toggle::make('enable_end_message')
-                                                    ->label('¿Activar mensaje fin alquiler?')
-                                                    ->columnSpan([
-                                                        'default' => 12,
-                                                        'md' => 6,
-                                                    ])
-                                                    ->inline(false)
-                                                    ->default(false)
-                                                    ->reactive(),
-
-                                                // TinyEditor::make('end_message')
-                                                //     ->label("Mensaje después alquiler")
-                                                //     ->fileAttachmentsDisk('public')
-                                                //     ->fileAttachmentsVisibility('public')
-                                                //     ->fileAttachmentsDirectory('uploads')
-                                                //     ->profile('full')
-                                                //     ->columnSpan('full')
-                                                //     ->required(fn($get) => $get('enable_end_message'))
-                                                //     ->reactive(),
-
-
-                                                // Forms\Components\TextInput::make('mail_client_id')
-                                                //     ->label('Mail Client ID')
-                                                //     ->columnSpan([
-                                                //         'default' => 12, // móvil
-
-                                                //     ])
-                                                //     ->maxLength(255),
-
-                                                // Forms\Components\TextInput::make('mail_client_secret')
-                                                //     ->label('Mail Client Secret')
-                                                //     ->columnSpan([
-                                                //         'default' => 12, // móvil
-
-                                                //     ])
-                                                //     ->maxLength(255),
-
-                                                // Forms\Components\TextInput::make('mail_tenant_id')
-                                                //     ->label('Mail Tenant ID (solo Outlook)')
-                                                //     ->columnSpan([
-                                                //         'default' => 12, // móvil
-                                                //     ])
-                                                //     ->maxLength(255)
-                                                //     ->visible(fn($get) => $get('mail_source') === 'Outlook'), // ahora sí funcionará
-                                                // Forms\Components\TextInput::make('mail_access_token')
-                                                //     ->label('Mail Access Token')
-                                                //     ->columnSpan([
-                                                //         'default' => 12, // móvil
-
-                                                //     ])
-                                                //     ->maxLength(65535)
-                                                //     ->disabled(), // normalmente no editable directamente
-
-                                                // Forms\Components\TextInput::make('mail_refresh_token')
-                                                //     ->label('Mail Refresh Token')
-                                                //     ->columnSpan([
-                                                //         'default' => 12, // móvil
-
-                                                //     ])
-                                                //     ->maxLength(65535)
-                                                //     ->disabled(), // normalmente no editable directamente
-
-                                                // Forms\Components\DateTimePicker::make('mail_token_expires_at')
-                                                //     ->label('Expiración del Access Token')
-                                                //     ->columnSpan([
-                                                //         'default' => 12, // móvil
-
-                                                //     ])
-                                                //     ->disabled(), // generado automáticamente
-
+                                                    ->columns(3)
+                                                    ->collapsible()
+                                                    ->createItemButtonLabel('Añadir Lotería')
                                             ])
                                     ]),
                             ])
@@ -295,7 +273,11 @@ class CenterResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
-                    ->label('Imagen'),
+                    ->label('Imagen')
+                    ->disk('public')       // mismo disco que usaste al subir
+                    // ->directory('centers') // opcional, si guardas en subdirectorio
+                    ->rounded()            // hace la imagen redonda
+                    ->size(40),             // tamaño en píxeles (ancho y alto),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')

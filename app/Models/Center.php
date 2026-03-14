@@ -15,6 +15,24 @@ class Center extends Model
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     // Relaciones
+    public function centerLoteries()
+    {
+        return $this->hasMany(CenterLoterie::class);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+
+
+            // Generar código único de 5 dígitos
+            do {
+                $code = random_int(10000, 99999);
+            } while (self::where('code', $code)->exists());
+
+            $model->code = $code;
+        });
+    }
     public function country()
     {
         return $this->belongsTo(Country::class);

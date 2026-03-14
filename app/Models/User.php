@@ -19,7 +19,7 @@ use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
 class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, HasAvatars, AuthenticationLoggable;
-
+    protected $appends = ['id_name'];
     /**
      * The attributes that are mass assignable.
      *
@@ -68,8 +68,19 @@ class User extends Authenticatable implements FilamentUser
     protected static function booted()
     {
         static::creating(function ($model) {
+
             if (Auth::check()) {
                 $model->center_id = Auth::user()->center_id;
+            }
+            // Generar código único de 5 dígitos
+            do {
+                $code = random_int(10000, 99999);
+            } while (self::where('username', $code)->exists());
+
+            $model->username = $code;
+            // Si el email es null generar uno automáticamente
+            if (empty($model->email)) {
+                $model->email = $code . '@correo.com';
             }
         });
     }
@@ -116,6 +127,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsTo(Center::class);
     }
 
+    public function getIdNameAttribute(): string
+    {
+        // Asegúrate de que exista el campo 'code'
+        $code = $this->username ?? '';
+        $name = $this->name ?? '';
+
+        return "{$code} - {$name}";
+    }
     // app/Models/User.php
 
     public function getFilamentAvatarUrl(): ?string

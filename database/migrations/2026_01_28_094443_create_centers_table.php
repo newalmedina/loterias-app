@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('centers', function (Blueprint $table) {
             $table->id(); // id bigIncrements unsigned
             $table->string('name', 255);
+            $table->string('code', 6)->unique();
             $table->string('email', 255)->nullable();
             $table->string('phone', 255)->nullable();
             $table->string('image', 255)->nullable();
