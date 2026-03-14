@@ -221,7 +221,7 @@ class CenterResource extends Resource
                                                             ->default(true),
 
                                                         Placeholder::make('horarios')
-                                                            ->label('Horarios y días disponibles')
+                                                            ->label('Hora cierra (Rep. dominicana ) y días de la semana  disponibles')
                                                             ->columnSpanFull()
                                                             ->content(function (Get $get) {
                                                                 $loterie = Loterie::find($get('loterie_id'));
