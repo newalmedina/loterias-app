@@ -11,12 +11,14 @@ return new class extends Migration
         Schema::create('loteries', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
+            $table->string('slug', 100)->nullable()->unique();
             $table->string('code', 20)->unique();
             $table->string('image')->nullable();
             $table->text('descripcion')->nullable();
             $table->boolean('active')->default(true);
 
             // Horas de fin por día
+            $table->string('time_zone')->nullable();
             $table->time('lunes_hora_fin')->nullable();
             $table->time('martes_hora_fin')->nullable();
             $table->time('miercoles_hora_fin')->nullable();

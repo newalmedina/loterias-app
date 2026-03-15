@@ -23,6 +23,12 @@ return new class extends Migration
             $table->smallInteger('min_bloqueo')->default(10);
             $table->integer('maximo_soportado')->default(0);
 
+            $table->integer('primer_premio')->default(0);
+            $table->integer('segundo_premio')->default(0);
+            $table->integer('tercer_premio')->default(0);
+            $table->integer('quarto_premio')->default(0);
+            $table->integer('quinto_premio')->default(0);
+
             $table->timestamps();
 
             $table->unique(['center_id', 'loterie_id'], 'center_loterie_unique');

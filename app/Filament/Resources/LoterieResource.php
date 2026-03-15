@@ -84,12 +84,16 @@ class LoterieResource extends Resource
                                                 ->required()
                                                 ->maxLength(255)
                                                 ->columnSpan(8), // ocupa la mayor parte
+                                            TextInput::make('time_zone')
+                                                ->label("zona_horaria")
+                                                ->required()
+                                                ->maxLength(255)
+                                                ->columnSpan(4), // ocupa la mayor parte
 
                                             Toggle::make('active')
                                                 ->label('¿Activo?')
                                                 ->default(true)
                                                 ->columnSpan(2), // ocupa un espacio pequeño
-
 
                                         ]),
 
@@ -176,6 +180,7 @@ class LoterieResource extends Resource
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Imagen'),
                 TextColumn::make('nombre')->label('Nombre')->searchable(),
+                TextColumn::make('time_zone')->label('Zona horaria')->searchable(),
                 TextColumn::make('descripcion')->label('Descripción')->limit(50),
                 IconColumn::make('active')->boolean()->label('¿Activo?'),
                 // TextColumn::make('bloquear_jugada')->label('Bloquear Jugada')->sortable(),

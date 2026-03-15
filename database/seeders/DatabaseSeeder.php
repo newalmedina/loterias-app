@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
         $this->call(OrderSeeder::class);
         $this->call(OtherExpenseSeeder::class);*/
         $this->call(CenterSeeder::class);
-        $this->call(LoteriasSeeder::class);
-        $this->call(WorldTableSeeder::class);
+        // $this->call(LoteriasSeeder::class);
+        // $this->call(WorldTableSeeder::class);
     }
 }
