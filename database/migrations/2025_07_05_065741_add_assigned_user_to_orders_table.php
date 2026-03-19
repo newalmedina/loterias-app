@@ -13,7 +13,7 @@ class AddAssignedUserToOrdersTable extends Migration
             $table->unsignedBigInteger('assigned_user_id')->nullable()->after('id');
 
             // Definimos la clave foránea que referencia a 'id' en tabla 'users'
-            $table->foreign('assigned_user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('assigned_user_id')->references('id')->on('users');
         });
     }
 

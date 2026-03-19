@@ -11,6 +11,7 @@ class Loterie extends Model
     use HasFactory;
     // Permitimos llenado masivo de todos los campos
     protected $guarded = ["id"];
+    protected $appends = ['image_base64'];
     // Casts para booleans y horas
     protected $casts = [
         'active' => 'boolean',
@@ -64,5 +65,23 @@ class Loterie extends Model
         return $this->belongsToMany(Center::class, 'center_loteries')
             ->withPivot(['active', 'min_bloqueo'])
             ->withTimestamps();
+    }
+
+    public function getImageBase64Attribute()
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        $path = storage_path('app/public/' . $this->image);
+
+        if (!file_exists($path)) {
+            return null;
+        }
+
+        $file = file_get_contents($path);
+        $type = mime_content_type($path);
+
+        return 'data:' . $type . ';base64,' . base64_encode($file);
     }
 }

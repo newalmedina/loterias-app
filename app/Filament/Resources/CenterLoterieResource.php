@@ -31,13 +31,13 @@ class CenterLoterieResource extends Resource
 {
     protected static ?string $model = CenterLoterie::class;
 
+    protected static ?string $navigationIcon = 'heroicon-o-ticket';
+    protected static ?string $navigationGroup = 'Loterías';
+    protected static ?int $navigationSort = 12;
+
     protected static ?string $navigationLabel = 'Mis loterías';
     protected static ?string $pluralModelLabel = 'Mis loterías';
     protected static ?string $modelLabel = 'Mis loterias';
-
-    protected static ?string $navigationIcon = 'heroicon-o-ticket';
-    protected static ?string $navigationGroup = 'Tablas de sistemas';
-    protected static ?int $navigationSort = 12;
 
     // Solo el usuario autenticado puede ver sus loterías
     public static function canViewAny(): bool
@@ -236,7 +236,7 @@ class CenterLoterieResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->label(''),
-                Tables\Actions\DeleteAction::make()->label(''),
+                Tables\Actions\DeleteAction::make()->label('')->tooltip('Eliminar')->visible(fn() => auth()->user()?->super_admin),
             ])
             ->bulkActions([
                 // Tables\Actions\DeleteBulkAction::make()->label('Eliminar Seleccionados'),

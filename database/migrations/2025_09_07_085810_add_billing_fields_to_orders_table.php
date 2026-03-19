@@ -12,19 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('billing_name')->after('customer_id')->nullable();
-            $table->string('billing_email')->after('billing_name')->nullable();
-            $table->string('billing_phone')->after('billing_email')->nullable();
-            $table->string('billing_address')->after('billing_phone')->nullable();
-            $table->string('billing_nif')->after('billing_address')->nullable();
+            // $table->string('billing_name')->after('customer_id')->nullable();
+            // $table->string('billing_email')->after('billing_name')->nullable();
+            // $table->string('billing_phone')->after('billing_email')->nullable();
+            // $table->string('billing_address')->after('billing_phone')->nullable();
+            // $table->string('billing_nif')->after('billing_address')->nullable();
 
-            // Campo para método de pago
-            $table->enum('payment_method', [
-                'Transferencia Bancaria',
-                'Efectivo',
-                'Bizum',
-                'Tarjeta de Crédito'
-            ])->after('customer_id')->nullable();
+            // // Campo para método de pago
+            // $table->enum('payment_method', [
+            //     'Transferencia Bancaria',
+            //     'Efectivo',
+            //     'Bizum',
+            //     'Tarjeta de Crédito'
+            // ])->after('customer_id')->nullable();
         });
     }
 
@@ -34,14 +34,14 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn([
-                'billing_name',
-                'billing_email',
-                'billing_phone',
-                'billing_address',
-                'payment_method',
-                'billing_nif',
-            ]);
+            // $table->dropColumn([
+            //     'billing_name',
+            //     'billing_email',
+            //     'billing_phone',
+            //     'billing_address',
+            //     'payment_method',
+            //     'billing_nif',
+            // ]);
         });
     }
 };

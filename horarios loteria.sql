@@ -4,7 +4,8 @@ UPDATE loteries SET
     jueves_hora_fin = '14:30', viernes_hora_fin = '14:30', sabado_hora_fin = '14:30', domingo_hora_fin = '18:00',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/Santo_Domingo'
+    time_zone = 'America/Santo_Domingo',
+    active = 1
 WHERE slug = 'loteria-nacional';
 
 -- Juega + Pega + y Gana Más (Rep. Dominicana)
@@ -13,7 +14,8 @@ UPDATE loteries SET
     jueves_hora_fin = '14:30', viernes_hora_fin = '14:30', sabado_hora_fin = '14:30', domingo_hora_fin = '14:30',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/Santo_Domingo'
+    time_zone = 'America/Santo_Domingo',
+    active = 1
 WHERE slug IN ('juega-pega', 'gana-mas');
 
 -- Leidsa (Pega 3 Más, Loto Pool, Super Kino TV, Quiniela Leidsa)
@@ -22,7 +24,8 @@ UPDATE loteries SET
     jueves_hora_fin = '20:55', viernes_hora_fin = '20:55', sabado_hora_fin = '20:55', domingo_hora_fin = '15:55',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/Santo_Domingo'
+    time_zone = 'America/Santo_Domingo',
+    active = 1
 WHERE slug IN ('pega-3-mas', 'loto-pool', 'super-kino-tv', 'quiniela-leidsa');
 
 -- Lotería Real (Quiniela Real)
@@ -31,7 +34,8 @@ UPDATE loteries SET
     jueves_hora_fin = '12:55', viernes_hora_fin = '12:55', sabado_hora_fin = '12:55', domingo_hora_fin = '12:55',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/Santo_Domingo'
+    time_zone = 'America/Santo_Domingo',
+    active = 1
 WHERE slug = 'quiniela-real';
 
 -- Mega Chances y MegaLotto
@@ -40,7 +44,8 @@ UPDATE loteries SET
     jueves_hora_fin = '19:55', viernes_hora_fin = '19:55', sabado_hora_fin = '19:55', domingo_hora_fin = '19:55',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/Santo_Domingo'
+    time_zone = 'America/Santo_Domingo',
+    active = 1
 WHERE slug IN ('mega-chances', 'megalotto');
 
 -- La Primera
@@ -49,7 +54,8 @@ UPDATE loteries SET
     jueves_hora_fin = '12:00', viernes_hora_fin = '12:00', sabado_hora_fin = '12:00', domingo_hora_fin = '12:00',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/Santo_Domingo'
+    time_zone = 'America/Santo_Domingo',
+    active = 1
 WHERE slug = 'la-primera-dia';
 
 -- Anguila (extranjera)
@@ -58,7 +64,8 @@ UPDATE loteries SET
     jueves_hora_fin = '21:00', viernes_hora_fin = '10:00', sabado_hora_fin = '13:00', domingo_hora_fin = '18:00',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/New_York'
+    time_zone = 'America/New_York',
+    active = 1
 WHERE slug LIKE 'anguila%';
 
 -- King Lottery (extranjera)
@@ -67,7 +74,8 @@ UPDATE loteries SET
     jueves_hora_fin = '19:30', viernes_hora_fin = '12:30', sabado_hora_fin = '19:30', domingo_hora_fin = '12:30',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/New_York'
+    time_zone = 'America/New_York',
+    active = 1
 WHERE slug LIKE 'king-lottery%';
 
 -- New York (extranjera)
@@ -76,7 +84,8 @@ UPDATE loteries SET
     jueves_hora_fin = '22:30', viernes_hora_fin = '14:30', sabado_hora_fin = '22:30', domingo_hora_fin = '14:30',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/New_York'
+    time_zone = 'America/New_York',
+    active = 1
 WHERE slug LIKE 'new-york%';
 
 -- Florida (extranjera)
@@ -85,21 +94,24 @@ UPDATE loteries SET
     jueves_hora_fin = '21:45', viernes_hora_fin = '13:30', sabado_hora_fin = '21:45', domingo_hora_fin = '13:30',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/New_York'
+    time_zone = 'America/New_York',
+    active = 1
 WHERE slug LIKE 'florida%';
 
 -- Mega Millions (extranjera)
 UPDATE loteries SET
     martes_hora_fin = '23:00', viernes_hora_fin = '23:00',
     martes_disponible = 1, viernes_disponible = 1,
-    time_zone = 'America/New_York'
+    time_zone = 'America/New_York',
+    active = 1
 WHERE slug = 'mega-millions';
 
 -- PowerBall (extranjera)
 UPDATE loteries SET
     miercoles_hora_fin = '23:00', sabado_hora_fin = '23:00',
     miercoles_disponible = 1, sabado_disponible = 1,
-    time_zone = 'America/New_York'
+    time_zone = 'America/New_York',
+    active = 1
 WHERE slug = 'powerball';
 
 -- Cash 4 Life (extranjera)
@@ -108,5 +120,6 @@ UPDATE loteries SET
     jueves_hora_fin = '21:00', viernes_hora_fin = '21:00', sabado_hora_fin = '21:00', domingo_hora_fin = '21:00',
     lunes_disponible = 1, martes_disponible = 1, miercoles_disponible = 1,
     jueves_disponible = 1, viernes_disponible = 1, sabado_disponible = 1, domingo_disponible = 1,
-    time_zone = 'America/New_York'
+    time_zone = 'America/New_York',
+    active = 1
 WHERE slug = 'cash-4-life';

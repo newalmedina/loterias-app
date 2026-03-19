@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string("code", 30)->nullable();
             $table->date('date');
-            $table->text('observations')->nullable();
-            $table->enum('type', ['sale', 'purchase', 'quote'])->default('sale');
+            // $table->text('observations')->nullable();
+            $table->enum('type', ['jugadas'])->default('jugadas');
 
-            $table->foreignId('customer_id')
-                ->constrained()
-                ->onDelete('restrict');
+            // $table->foreignId('customer_id')
+            //     ->constrained()
+            //     ->onDelete('restrict');
 
-            $table->enum('status', ['pending', 'invoiced'])->default('pending');
+            // $table->enum('status', ['pending', 'invoiced'])->default('pending');
 
             // Campos de tracking
             $table->foreignId('created_by')

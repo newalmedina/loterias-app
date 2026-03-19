@@ -53,6 +53,11 @@ class CustomerResource extends Resource
 
         return $query;
     }
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+        return auth()->check() && auth()->user()->super_admin;
+    }
     public static function getModelLabel(): string
     {
         return 'Cliente';
@@ -267,9 +272,9 @@ class CustomerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCustomers::route('/'),
-            'create' => Pages\CreateCustomer::route('/create'),
-            'edit' => Pages\EditCustomer::route('/{record}/edit'),
+            // 'index' => Pages\ListCustomers::route('/'),
+            // 'create' => Pages\CreateCustomer::route('/create'),
+            // 'edit' => Pages\EditCustomer::route('/{record}/edit'),
         ];
     }
 }

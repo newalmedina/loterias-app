@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class CenterLoterie extends Model
 {
@@ -27,5 +28,14 @@ class CenterLoterie extends Model
     public function loterie()
     {
         return $this->belongsTo(Loterie::class);
+    }
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
+    }
+    public function scopeMyCenter($query)
+    {
+
+        return $query->where("center_id",  Auth::user()->center_id);
     }
 }

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('loteries', function (Blueprint $table) {
             $table->id();
+            $table->string('short_name', 20)->nullable();
             $table->string('nombre');
             $table->string('slug', 100)->nullable()->unique();
             $table->string('code', 20)->unique();

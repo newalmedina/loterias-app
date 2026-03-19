@@ -75,7 +75,8 @@ class GetLoteries extends Command
             Loterie::create([
                 'nombre' => $nombre,
                 'slug' => $slug,
-                'image' => $imagePath
+                'image' => $imagePath,
+                'active' => false
             ]);
 
             $this->info("Insertado: $nombre");

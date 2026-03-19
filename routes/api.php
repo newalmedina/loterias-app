@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\ApiLoteriesController;
 use App\Http\Controllers\AppiAppointmentController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\ApiAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,14 +21,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('login', [AuthController::class, 'login']);
+Route::post('login', [ApiAuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('user', [AuthController::class, 'userInformation']);
-    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('user', [ApiAuthController::class, 'userInformation']);
 
-    Route::get(
-        'appointments/by-range-date',
-        [AppiAppointmentController::class, 'getAppointmentByRangeOfDate']
-    );
+
+    Route::get('/loteries/get-center-loteries', [ApiLoteriesController::class, 'getCenterLoteries']);
+    Route::get('/loteries/get-results', [ApiLoteriesController::class, 'getResults']);
+
+    Route::post('logout', [ApiAuthController::class, 'logout']);
+
+    // Route::get(
+    //     'appointments/by-range-date',
+    //     [AppiAppointmentController::class, 'getAppointmentByRangeOfDate']
+    // );
 });

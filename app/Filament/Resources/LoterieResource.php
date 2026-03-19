@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TimePicker;
@@ -20,6 +21,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 
 class LoterieResource extends Resource
@@ -226,7 +228,22 @@ class LoterieResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Filter::make('active')
+                    ->label('Estado')
+                    ->form([
+                        Select::make('active')
+                            ->label('Selecciona estado')
+                            ->options([
+                                '' => 'Todos',
+                                1 => 'Activos',
+                                0 => 'No activos',
+                            ]),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (isset($data['active']) && $data['active'] !== '') {
+                            $query->where('active', $data['active']);
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->label('')->tooltip('Editar'),

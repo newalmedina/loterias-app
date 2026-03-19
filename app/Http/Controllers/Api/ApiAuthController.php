@@ -1,24 +1,29 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 
-class AuthController extends Controller
+class ApiAuthController extends Controller
 {
 
     // LOGIN
     public function login(Request $request)
     {
         try {
+            // Validación
             $request->validate([
-                'email' => 'required|email',
-                'password' => 'required'
+                'login'    => 'required|string', // email o username
+                'password' => 'required|string'
             ]);
 
-            if (!Auth::attempt($request->only('email', 'password'))) {
+            $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+            // Intentamos autenticación
+            if (!Auth::attempt([$loginField => $request->login, 'password' => $request->password])) {
                 return response()->json([
                     'code' => 401,
                     'message' => 'Credenciales incorrectas'
@@ -42,7 +47,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 500,
-                'message' => e->errors()
+                'message' => $e->getMessage() // ⚠️ usar getMessage() en lugar de e->errors()
             ]);
         }
     }
@@ -52,7 +57,7 @@ class AuthController extends Controller
     {
         try {
             return response()->json([
-                'user' => $request->user()
+                $request->user()
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
