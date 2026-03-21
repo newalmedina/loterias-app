@@ -13,7 +13,7 @@ class Center extends Model
      * Campos protegidos contra asignación masiva.
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
-
+    protected $appends = ['image_base64'];
     // Relaciones
     public function centerLoteries()
     {

@@ -55,9 +55,18 @@ class ApiAuthController extends Controller
     // INFORMACIÓN DEL USUARIO
     public function userInformation(Request $request)
     {
+        $user = $request->user();
+        $center = $user->center;
+        if (!$center) {
+            return response()->json([
+                'code' => 402,
+                'message' => 'Notienes centros asignados'
+            ], 402);
+        }
+        // dd($center);
         try {
             return response()->json([
-                $request->user()
+                $user
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
