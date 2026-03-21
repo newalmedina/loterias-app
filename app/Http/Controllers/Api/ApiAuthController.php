@@ -79,17 +79,10 @@ class ApiAuthController extends Controller
     // LOGOUT
     public function logout(Request $request)
     {
-        try {
-            $request->user()->currentAccessToken()->delete();
+        // Borra todos los tokens del usuario actual
+        $request->user()->tokens()->delete();
 
-            return response()->json([
-                'message' => 'Sesión cerrada correctamente'
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'code' => 500,
-                'message' => 'Ocurrió un error al cerrar la sesión'
-            ], 500);
-        }
+        Auth::logout(); // cerrar sesión
+        return response()->json(['message' => 'Logout exitoso']);
     }
 }
