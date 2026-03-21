@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Auth;
 
 class ApiLoteriesController extends Controller
 {
+    public function getLoteries()
+    {
+
+        $loteries = Loterie::active()->get();
+
+
+        return response()->json([
+            'code' => 200,
+            'data' => $loteries
+        ]);
+    }
     public function getCenterLoteries()
     {
         $autenticatedUser = Auth::user();
@@ -43,6 +54,7 @@ class ApiLoteriesController extends Controller
         $startDate = $request->query('start_date');
         $endDate   = $request->query('end_date');
         $reloadResultados = filter_var($request->query('reload', false), FILTER_VALIDATE_BOOLEAN);
+        $loteries  = $request->query('loteries', []);
 
         // Convertimos a Carbon para poder iterar
         $start = $startDate ? Carbon::parse($startDate) : null;
@@ -81,11 +93,18 @@ class ApiLoteriesController extends Controller
             $query->whereDate('date', '<=', $end);
         }
 
+
+        if (count($loteries) > 0) {
+            $query->whereIn('loterie_id', $loteries);
+        }
+
+
         $loterieResults = $query->with(['loterie' => fn($q) => $q->active()])->get();
 
         $results = $loterieResults->filter(fn($lotery) => $lotery->loterie) // solo loterías activas
             ->map(function ($lotery) {
                 return [
+                    "loterie_id"       => $lotery->loterie_id,
                     "date"       => $lotery->date ? Carbon::parse($lotery->date)->format("d-m-Y") : null,
                     "short_name" => $lotery->loterie->short_name,
                     "name"       => $lotery->loterie->nombre,

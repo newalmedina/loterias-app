@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [ApiAuthController::class, 'userInformation']);
 
 
+    Route::get('/loteries/get-loteries', [ApiLoteriesController::class, 'getLoteries']);
     Route::get('/loteries/get-center-loteries', [ApiLoteriesController::class, 'getCenterLoteries']);
     Route::get('/loteries/get-results', [ApiLoteriesController::class, 'getResults']);
 

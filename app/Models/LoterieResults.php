@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +13,23 @@ class LoterieResults extends Model
     // Añadimos el atributo al JSON
     protected $appends = ['numbers_formatted'];
 
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            // Si no existe spain_created_at, asignamos ahora en hora de España
+            if (!$model->spain_created_at) {
+                $model->spain_created_at = Carbon::now('Europe/Madrid');
+            }
+
+            // Siempre que se cree, spain_updated_at = ahora
+            $model->spain_updated_at = Carbon::now('Europe/Madrid');
+        });
+
+        static::updating(function ($model) {
+            // Al actualizar, solo spain_updated_at cambia
+            $model->spain_updated_at = Carbon::now('Europe/Madrid');
+        });
+    }
     public function loterie()
     {
         return $this->belongsTo(Loterie::class);
