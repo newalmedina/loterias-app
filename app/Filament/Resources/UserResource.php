@@ -106,7 +106,7 @@ class UserResource extends Resource
                                         Forms\Components\TextInput::make('email')
                                             ->email()
                                             ->label("Email")
-                                            ->required()
+                                            // ->required()
                                             ->disabled()
                                             ->maxLength(255),
                                         Forms\Components\TextInput::make('name')
