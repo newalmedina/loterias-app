@@ -10,7 +10,7 @@ nuevo
 8CxR8V9wvPlzigwI
 
 
-docker exec -it by-estrella-belleza-apache bash
+docker exec -it loterias-app-apache bash
 
 php artisan cache:clear
 php artisan config:clear

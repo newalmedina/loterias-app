@@ -64,6 +64,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // $this->call(LoteriasSeeder::class);
-        // $this->call(WorldTableSeeder::class);
+        $this->call(WorldTableSeeder::class);
     }
 }
