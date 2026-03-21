@@ -132,10 +132,20 @@ class CenterLoterieResource extends Resource
                                 ->default(0)
                                 ->required()
                                 ->columnSpan(3),
+                            Placeholder::make('time_zone')
+                                ->label('Zona horaria')
+                                ->columnSpan(3)
+                                ->content(function ($get) {
+                                    $loterieId = $get('loterie_id'); // Obtenemos la relación seleccionada
+                                    if (!$loterieId) return 'Selecciona una lotería';
+
+                                    $loterie = \App\Models\Loterie::find($loterieId);
+                                    return $loterie?->time_zone ?? 'Sin zona horaria';
+                                }),
 
                             // Horarios y disponibilidad
                             Placeholder::make('horarios')
-                                ->label('Hora cierra (Rep. dominicana ) y días de la semana  disponibles')
+                                ->label('Hora cierra  y días de la semana  disponibles')
                                 ->columnSpanFull()
                                 ->content(function ($get) {
                                     $loterie = Loterie::find($get('loterie_id'));
@@ -190,6 +200,7 @@ class CenterLoterieResource extends Resource
 
                 // Nombre de la lotería
                 TextColumn::make('loterie.nombre')->label('Lotería')->searchable(),
+                TextColumn::make('loterie.time_zone')->label('Zona horaria')->searchable(),
 
                 // Horas de cierre por día
                 TextColumn::make('loterie.lunes_hora_fin')

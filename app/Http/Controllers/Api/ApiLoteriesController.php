@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CenterLoterie;
 use App\Models\Loterie;
 use App\Models\LoterieResults;
+use App\Services\LoterieScraperService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,27 +37,53 @@ class ApiLoteriesController extends Controller
         ]);
     }
 
-    public function getResults(Request $request)
+    public function getResults(Request $request, LoterieScraperService $scraper)
     {
+        // Obtener parámetros de la query
         $startDate = $request->query('start_date');
         $endDate   = $request->query('end_date');
+        $reloadResultados = filter_var($request->query('reload', false), FILTER_VALIDATE_BOOLEAN);
 
-        $query = LoterieResults::query();
+        // Convertimos a Carbon para poder iterar
+        $start = $startDate ? Carbon::parse($startDate) : null;
+        $end   = $endDate   ? Carbon::parse($endDate)   : null;
 
-        $startDate = $startDate ? Carbon::parse($startDate)->format('Y-m-d') : null;
-        $endDate   = $endDate ? Carbon::parse($endDate)->format('Y-m-d') : null;
+        // Si reloadResultados es true y las fechas son válidas, llamamos al Service
+        if ($reloadResultados && $start && $end) {
+            $resultsLog = [];
 
-        if ($startDate) {
-            $query->whereDate('date', '>=', $startDate);
+            for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+                $result = $scraper->scrapeDate($date);
+
+                if (!$result['success']) {
+                    $resultsLog[] = [
+                        'status' => 'error',
+                        'message' => $result['message'],
+                        'date' => $date->format('Y-m-d')
+                    ];
+                    continue;
+                }
+
+                foreach ($result['results'] as $r) {
+                    $resultsLog[] = $r;
+                }
+            }
         }
 
-        if ($endDate) {
-            $query->whereDate('date', '<=', $endDate);
+        // Si no recargamos, devolvemos los resultados existentes de la BD
+        $query = LoterieResults::query();
+
+        if ($start) {
+            $query->whereDate('date', '>=', $start);
+        }
+
+        if ($end) {
+            $query->whereDate('date', '<=', $end);
         }
 
         $loterieResults = $query->with(['loterie' => fn($q) => $q->active()])->get();
 
-        $results = $loterieResults->filter(fn($lotery) => $lotery->loterie) // solo activas
+        $results = $loterieResults->filter(fn($lotery) => $lotery->loterie) // solo loterías activas
             ->map(function ($lotery) {
                 return [
                     "date"       => $lotery->date ? Carbon::parse($lotery->date)->format("d-m-Y") : null,
@@ -68,7 +95,7 @@ class ApiLoteriesController extends Controller
                     "image"      => $lotery->loterie->image_base64,
                 ];
             })
-            ->values(); // reindexar array
+            ->values(); // Reindexar array
 
         return response()->json([
             'code' => 200,

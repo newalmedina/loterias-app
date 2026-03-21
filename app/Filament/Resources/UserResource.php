@@ -98,14 +98,20 @@ class UserResource extends Resource
                                     ])
                                     ->schema([
 
-                                        Forms\Components\TextInput::make('name')
-                                            ->required()
-                                            ->label("Nombre")
+                                        Forms\Components\TextInput::make('username')
+                                            // ->required()
+                                            ->disabled()
+                                            ->label("Código")
                                             ->maxLength(255),
                                         Forms\Components\TextInput::make('email')
                                             ->email()
                                             ->label("Email")
                                             ->required()
+                                            ->disabled()
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('name')
+                                            ->required()
+                                            ->label("Nombre")
                                             ->maxLength(255),
                                         // Forms\Components\DateTimePicker::make('email_verified_at'),
 
@@ -220,6 +226,9 @@ class UserResource extends Resource
                     ->circular() // Hace la imagen circular
                     ->disk('public'), // Especifica el disco 'public'
                 // ->location(fn($record) => 'storage/' . $record->image),
+                Tables\Columns\TextColumn::make('username')
+                    ->label("Código")
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label("Nombre")
                     ->searchable(),

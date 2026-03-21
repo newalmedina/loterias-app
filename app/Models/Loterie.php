@@ -60,6 +60,10 @@ class Loterie extends Model
     {
         return $this->hasMany(CenterLoterie::class);
     }
+    public function results()
+    {
+        return $this->hasMany(LoterieResults::class);
+    }
     public function centers()
     {
         return $this->belongsToMany(Center::class, 'center_loteries')
