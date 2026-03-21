@@ -15,10 +15,10 @@ class ApiAuthController extends Controller
     {
         try {
             // Validación
-            $request->validate([
-                'login'    => 'required|string', // email o username
-                'password' => 'required|string'
-            ]);
+            // $request->validate([
+            //     'login'    => 'required|string', // email o username
+            //     'password' => 'required|string'
+            // ]);
 
             $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
