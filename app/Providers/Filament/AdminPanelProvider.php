@@ -21,6 +21,7 @@ use App\Filament\CustomWidgets\VentasPorVendedorPercentPieChart;
 use App\Filament\CustomWidgets\VentasPorVendedorPieChart;
 use App\Filament\Pages\Backups;
 use App\Filament\Pages\CalendarPage;
+use App\Filament\Resources\AdminResource\Pages\Login;
 use App\Http\Middleware\AuthenticateAndCheckActive;
 use App\Models\Setting;
 use Filament\Http\Middleware\Authenticate;
@@ -62,7 +63,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             // ->login()
-            ->login(\App\Filament\Pages\Login::class)
+            ->login(Login::class)
 
             ->passwordReset(RequestPasswordReset::class)
             ->colors([
