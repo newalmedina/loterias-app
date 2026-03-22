@@ -66,7 +66,7 @@ class ApiAuthController extends Controller
         // dd($center);
         try {
             return response()->json([
-                $user
+                'user' => $user
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
