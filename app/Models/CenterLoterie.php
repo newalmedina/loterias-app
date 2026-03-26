@@ -31,11 +31,11 @@ class CenterLoterie extends Model
     }
     public function scopeActive($query)
     {
-        return $query->where('active', true);
+        return $query->where('center_loteries.active', true);
     }
     public function scopeMyCenter($query)
     {
 
-        return $query->where("center_id",  Auth::user()->center_id);
+        return $query->where("center_loteries.center_id",  Auth::user()->center_id);
     }
 }

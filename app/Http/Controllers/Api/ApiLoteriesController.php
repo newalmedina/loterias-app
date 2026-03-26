@@ -36,7 +36,7 @@ class ApiLoteriesController extends Controller
     {
         $autenticatedUser = Auth::user();
 
-        $loterieCenters = CenterLoterie::active()->orderBy("name", "asc")->get();
+        $loterieCenters = CenterLoterie::active()->join("loteries", "center_loteries.loterie_id", "loteries.id")->orderBy("loteries.name", "asc")->get();
 
         $results = [];
 
