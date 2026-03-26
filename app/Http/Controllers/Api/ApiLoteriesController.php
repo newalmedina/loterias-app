@@ -17,7 +17,7 @@ class ApiLoteriesController extends Controller
     {
         try {
             // Obtenemos las loterías activas
-            $loteries = Loterie::active()->get()->toArray(); // convertir a array para evitar problemas con Eloquent
+            $loteries = Loterie::active()->orderBy("nombre", "asc")->get()->toArray(); // convertir a array para evitar problemas con Eloquent
 
             return response()->json([
                 'code' => 200,
