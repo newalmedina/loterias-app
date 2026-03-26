@@ -15,14 +15,22 @@ class ApiLoteriesController extends Controller
 {
     public function getLoteries()
     {
+        try {
+            // Obtenemos las loterías activas
+            $loteries = Loterie::active()->get()->toArray(); // convertir a array para evitar problemas con Eloquent
 
-        $loteries = Loterie::active()->get();
-
-
-        return response()->json([
-            'code' => 200,
-            'data' => $loteries
-        ]);
+            return response()->json([
+                'code' => 200,
+                'data' => $loteries
+            ]);
+        } catch (\Exception $e) {
+            // Capturamos cualquier excepción y devolvemos un JSON con el error
+            return response()->json([
+                'code' => 500,
+                'message' => 'Error al obtener las loterías',
+                'error' => $e->getMessage(), // mensaje del error
+            ], 500);
+        }
     }
     public function getCenterLoteries()
     {

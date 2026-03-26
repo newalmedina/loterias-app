@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
         // Ejecutar aviso de citas pendientes todos los días a las 5:00 AM
         // $schedule->command('appointments:send-pending-to-workers')->dailyAt('05:00');
 
-        $schedule->command('scrape:loterie-results')->everyTenMinutes();
+        $schedule->command('scrape:loterie-results')->everyTwoHours();
         $schedule->command('locations:translate')->dailyAt('07:00');
         $schedule->command('erase:backup_old')->dailyAt('06:00');
         // $schedule->command('backup:run')->dailyAt('05:00');
