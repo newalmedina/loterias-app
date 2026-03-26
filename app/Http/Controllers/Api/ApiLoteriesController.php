@@ -58,17 +58,14 @@ class ApiLoteriesController extends Controller
 
     public function getResults(Request $request, LoterieScraperService $scraper)
     {
-        // Obtener parámetros de la query
         $startDate = $request->query('start_date');
         $endDate   = $request->query('end_date');
         $reloadResultados = filter_var($request->query('reload', false), FILTER_VALIDATE_BOOLEAN);
         $loteries  = $request->query('loteries', []);
 
-        // Convertimos a Carbon para poder iterar
         $start = $startDate ? Carbon::parse($startDate) : null;
         $end   = $endDate   ? Carbon::parse($endDate)   : null;
 
-        // Si reloadResultados es true y las fechas son válidas, llamamos al Service
         if ($reloadResultados && $start && $end) {
             $resultsLog = [];
 
@@ -90,39 +87,40 @@ class ApiLoteriesController extends Controller
             }
         }
 
-        // Si no recargamos, devolvemos los resultados existentes de la BD
-        $query = LoterieResults::query();
+        // JOIN con la tabla loteries y filtrar solo activas
+        $query = LoterieResults::select('loterie_results.*', 'loteries.short_name', 'loteries.nombre', 'loteries.slug', 'loteries.code', 'loteries.image_base64')
+            ->join('loteries', function ($join) {
+                $join->on('loterie_results.loterie_id', '=', 'loteries.id')
+                    ->where('loteries.active', 1); // solo loterías activas
+            });
 
         if ($start) {
-            $query->whereDate('date', '>=', $start);
+            $query->whereDate('loterie_results.date', '>=', $start);
         }
 
         if ($end) {
-            $query->whereDate('date', '<=', $end);
+            $query->whereDate('loterie_results.date', '<=', $end);
         }
-
 
         if (count($loteries) > 0) {
-            $query->whereIn('loterie_id', $loteries);
+            $query->whereIn('loterie_results.loterie_id', $loteries);
         }
 
+        // Ordenar por nombre de la lotería ascendente
+        $loterieResults = $query->orderBy('loteries.nombre', 'asc')->get();
 
-        $loterieResults = $query->with(['loterie' => fn($q) => $q->active()])->get();
-
-        $results = $loterieResults->filter(fn($lotery) => $lotery->loterie) // solo loterías activas
-            ->map(function ($lotery) {
-                return [
-                    "loterie_id"       => $lotery->loterie_id,
-                    "date"       => $lotery->date ? Carbon::parse($lotery->date)->format("d-m-Y") : null,
-                    "short_name" => $lotery->loterie->short_name,
-                    "name"       => $lotery->loterie->nombre,
-                    "slug"       => $lotery->loterie->slug,
-                    "code"       => $lotery->loterie->code,
-                    "numbers"    => $lotery->numbers_formatted,
-                    "image"      => $lotery->loterie->image_base64,
-                ];
-            })
-            ->values(); // Reindexar array
+        $results = $loterieResults->map(function ($lotery) {
+            return [
+                "loterie_id" => $lotery->loterie_id,
+                "date"       => $lotery->date ? Carbon::parse($lotery->date)->format("d-m-Y") : null,
+                "short_name" => $lotery->short_name,
+                "name"       => $lotery->nombre,
+                "slug"       => $lotery->slug,
+                "code"       => $lotery->code,
+                "numbers"    => $lotery->numbers_formatted,
+                "image"      => $lotery->image_base64,
+            ];
+        });
 
         return response()->json([
             'code' => 200,
