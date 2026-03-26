@@ -17,7 +17,7 @@ class ApiLoteriesController extends Controller
     {
         try {
             // Obtenemos las loterías activas
-            $loteries = Loterie::active()->get()->toArray(); // convertir a array para evitar problemas con Eloquent
+            $loteries = Loterie::active()->orderBy("name", "asc")->get()->toArray(); // convertir a array para evitar problemas con Eloquent
 
             return response()->json([
                 'code' => 200,
@@ -36,7 +36,7 @@ class ApiLoteriesController extends Controller
     {
         $autenticatedUser = Auth::user();
 
-        $loterieCenters = CenterLoterie::active()->join("loteries", "center_loteries.loterie_id", "loteries.id")->orderBy("loteries.name", "asc")->get();
+        $loterieCenters = CenterLoterie::active()->orderBy("name", "asc")->get();
 
         $results = [];
 
