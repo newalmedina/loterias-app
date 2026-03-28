@@ -22,15 +22,25 @@ class ApiAuthController extends Controller
 
             $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-            // Intentamos autenticación
-            if (!Auth::attempt([$loginField => $request->login, 'password' => $request->password])) {
+            // Intentamos obtener el usuario
+            $user = \App\Models\User::where($loginField, $request->login)->first();
+
+            if (!$user || !\Hash::check($request->password, $user->password)) {
                 return response()->json([
                     'code' => 401,
                     'message' => 'Credenciales incorrectas'
-                ]);
+                ], 401);
             }
 
-            $user = Auth::user();
+            // Validamos si el usuario está activo
+            if ($user->active != 1) {
+                return response()->json([
+                    'code' => 403,
+                    'message' => 'Usuario inactivo. Contacta con soporte.'
+                ], 403);
+            }
+
+            // Creamos el token
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
@@ -47,7 +57,7 @@ class ApiAuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 500,
-                'message' => $e->getMessage() // ⚠️ usar getMessage() en lugar de e->errors()
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -86,6 +96,17 @@ class ApiAuthController extends Controller
                 return response()->json([
                     'code' => 401,
                     'message' => 'Token inválido o expirado'
+                ], 401);
+            }
+
+            // Verificar si el usuario está activo
+            if ($user->active != 1) {
+                // Revocar el token actual
+                $request->user()->currentAccessToken()->delete();
+
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Usuario inactivo'
                 ], 401);
             }
 
