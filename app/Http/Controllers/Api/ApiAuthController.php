@@ -76,6 +76,32 @@ class ApiAuthController extends Controller
         }
     }
 
+    // VALIDAR TOKEN
+    public function validateToken(Request $request)
+    {
+        try {
+            $user = $request->user(); // Laravel verifica automáticamente el token
+
+            if (!$user) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Token inválido o expirado'
+                ], 401);
+            }
+
+            return response()->json([
+                'code' => 200,
+                'message' => 'Token válido',
+                'user' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'message' => 'Error al validar el token'
+            ], 500);
+        }
+    }
+
     // LOGOUT
     public function logout(Request $request)
     {

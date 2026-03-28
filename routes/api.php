@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/loteries/get-center-loteries', [ApiLoteriesController::class, 'getCenterLoteries']);
     Route::get('/loteries/get-results', [ApiLoteriesController::class, 'getResults']);
 
+    Route::post('validate-token', [ApiAuthController::class, 'validateToken']);
     Route::post('logout', [ApiAuthController::class, 'logout']);
 
     // Route::get(
