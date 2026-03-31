@@ -18,8 +18,24 @@ class ApiLoteriesController extends Controller
     {
         try {
             // Obtenemos las loterías activas
-            $loteries = Loterie::active()->orderBy("nombre", "asc")->get()->toArray(); // convertir a array para evitar problemas con Eloquent
+            $loteries = Loterie::active()->get()->sortBy(function ($lotery) {
+                // Solo para Anguilla
+                if (str_starts_with($lotery->slug, 'anguilla-')) {
+                    if (preg_match('/(\d+)(am|pm)/i', $lotery->slug, $matches)) {
+                        $hour = (int)$matches[1];
+                        $ampm = strtolower($matches[2]);
 
+                        // Convertir a 24h
+                        if ($ampm === 'pm' && $hour < 12) $hour += 12;
+                        if ($ampm === 'am' && $hour === 12) $hour = 0;
+
+                        return $hour;
+                    }
+                }
+
+                // Para otras loterías, puedes devolver 0 para no afectar orden
+                return 0;
+            })->values()->toArray();
             return response()->json([
                 'code' => 200,
                 'data' => $loteries
@@ -127,9 +143,26 @@ class ApiLoteriesController extends Controller
         $loterieResults = $query->with(['loterie' => fn($q) => $q->active()])->get();
 
         // Filtrar solo loterías activas, ordenar por nombre y formatear resultados
+        // Filtrar solo loterías activas y ordenar correctamente
         $results = $loterieResults
             ->filter(fn($lotery) => $lotery->loterie)
-            ->sortBy(fn($lotery) => $lotery->loterie->nombre)
+            ->sortBy(function ($loteryResult) {
+                $lotery = $loteryResult->loterie;
+
+                // Ordenar Anguilla por hora
+                if (str_starts_with($lotery->slug, 'anguilla-')) {
+                    if (preg_match('/(\d+)(am|pm)/i', $lotery->slug, $matches)) {
+                        $hour = (int)$matches[1];
+                        $ampm = strtolower($matches[2]);
+                        if ($ampm === 'pm' && $hour < 12) $hour += 12;
+                        if ($ampm === 'am' && $hour === 12) $hour = 0;
+                        return $hour; // prioridad por hora 24h
+                    }
+                }
+
+                // Para otras loterías, usar orden alfabético por nombre
+                return 100 + ord(strtolower(substr($lotery->nombre, 0, 1)));
+            })
             ->map(fn($lotery) => [
                 "loterie_id" => $lotery->loterie_id,
                 "date"       => $lotery->date ? Carbon::parse($lotery->date)->format("d-m-Y") : null,
@@ -141,7 +174,6 @@ class ApiLoteriesController extends Controller
                 "image"      => $lotery->loterie->image_base64,
             ])
             ->values(); // Reindexar array
-
         return response()->json([
             'code' => 200,
             'data' => $results,
