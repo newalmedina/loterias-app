@@ -19,23 +19,24 @@ class ApiLoteriesController extends Controller
         try {
             // Obtenemos las loterías activas
             $loteries = Loterie::active()->get()->sortBy(function ($lotery) {
-                // Solo para Anguilla
                 if (str_starts_with($lotery->slug, 'anguilla-')) {
+                    // Extraemos hora y convertimos a 24h
                     if (preg_match('/(\d+)(am|pm)/i', $lotery->slug, $matches)) {
                         $hour = (int)$matches[1];
                         $ampm = strtolower($matches[2]);
 
-                        // Convertir a 24h
                         if ($ampm === 'pm' && $hour < 12) $hour += 12;
                         if ($ampm === 'am' && $hour === 12) $hour = 0;
 
-                        return $hour;
+                        // Ponemos un valor bajo para que siempre queden arriba
+                        return 100 + $hour; // 100 es base para Anguilla
                     }
                 }
 
-                // Para otras loterías, puedes devolver 0 para no afectar orden
-                return 0;
+                // Para otras loterías, usamos un valor alto + orden alfabético
+                return 1000 + ord(strtolower(substr($lotery->nombre, 0, 1)));
             })->values()->toArray();
+
             return response()->json([
                 'code' => 200,
                 'data' => $loteries
