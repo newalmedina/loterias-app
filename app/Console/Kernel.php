@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('appointments:send-pending-to-workers')->dailyAt('05:00');
 
         $schedule->command('scrape:loterie-results')->everyFiveMinutes();
+        $schedule->command('scrape:premiosdo-results')->everyFiveMinutes();
         $schedule->command('locations:translate')->dailyAt('07:00');
         $schedule->command('erase:backup_old')->dailyAt('06:00');
         // $schedule->command('backup:run')->dailyAt('05:00');
