@@ -50,21 +50,42 @@ class ApiLoteriesController extends Controller
             ], 500);
         }
     }
-    public function getCenterLoteries()
+    public function getCenterLoteriesDisponibles(Request $request)
     {
-        $autenticatedUser = Auth::user();
 
-        $loterieCenters = CenterLoterie::active()->get();
+        $loteries = Loterie::active()
+            ->whereHas('myCenterLoteries')
+            ->get()
+            ->sortBy(function ($lotery) {
+                if (str_starts_with($lotery->slug, 'anguilla-')) {
+                    if (preg_match('/(\d+)(am|pm)/i', $lotery->slug, $matches)) {
+                        $hour = (int)$matches[1];
+                        $ampm = strtolower($matches[2]);
+
+                        if ($ampm === 'pm' && $hour < 12) $hour += 12;
+                        if ($ampm === 'am' && $hour === 12) $hour = 0;
+
+                        return 100 + $hour;
+                    }
+                }
+
+                return 1000 + ord(strtolower(substr($lotery->nombre, 0, 1)));
+            })
+            ->values();
 
         $results = [];
 
-        foreach ($loterieCenters as $loterieCenter) {
+
+        foreach ($loteries as $loterie) {
+
             $results[] = [
-                "short_name" => $loterieCenter?->loterie?->short_name,
-                "name" => $loterieCenter?->loterie?->nombre,
-                "slug" => $loterieCenter?->loterie?->slug,
-                "code" => $loterieCenter?->loterie?->code,
-                "image" => $loterieCenter?->loterie?->image_base64,
+                "id" => $loterie->id,
+                "disponible" => $loterie->disponible,
+                "short_name" => $loterie->short_name,
+                "name" => $loterie->nombre,
+                "slug" => $loterie->slug,
+                "code" => $loterie->code,
+                "image" => $loterie->image_base64,
             ];
         }
 
