@@ -78,16 +78,7 @@ class ApiLoteriesController extends Controller
 
         foreach ($loteries as $loterie) {
 
-            $results[] = [
-                "loterie_id" => $loterie->loterie_id,
-                "disponible" => $loterie->disponible,
-                // "date"       => $loterie->date ? Carbon::parse($loterie->date)->format("d-m-Y") : null,
-                "short_name" => $loterie->short_name,
-                "name"       => $loterie->nombre,
-                "slug"       => $loterie->slug,
-                "code"       => $loterie->code,
-                "image"      => $loterie->image_base64,
-            ];
+            $results[] = $loterie;
         }
 
         return response()->json([
