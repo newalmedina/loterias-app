@@ -77,8 +77,9 @@ class ApiLoteriesController extends Controller
 
 
         foreach ($loteries as $loterie) {
-
-            $results[] = $loterie;
+            if ($loterie->disponible) {
+                $results[] = $loterie;
+            }
         }
 
         return response()->json([
