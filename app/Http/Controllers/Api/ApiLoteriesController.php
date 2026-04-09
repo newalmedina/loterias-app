@@ -77,7 +77,7 @@ class ApiLoteriesController extends Controller
 
 
         foreach ($loteries as $loterie) {
-            if (!$loterie->disponible) {
+            if ($loterie->disponible) {
                 $results[] = $loterie;
             }
         }
