@@ -101,7 +101,7 @@ class Loterie extends Model
 
     public function getImageUrlAttribute()
     {
-        return Storage::url($this->image);
+        return url(Storage::url($this->image));
     }
     public function getDisponibleAttribute()
     {
