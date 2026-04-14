@@ -28,7 +28,7 @@ class ApiVentasController extends Controller
         ]);
 
 
-        $error = true;
+        $error = false;
 
         $errorMessage = [
             "Loteria Nac. cerrada",
@@ -58,7 +58,7 @@ class ApiVentasController extends Controller
         }
         return response()->json([
             'success' => false,
-            'message' => 'Ha ocurrido un error',
+            'message' => 'Ha ocurrido un error  ',
             'messageList' => $errorMessage,
         ]);
     }
