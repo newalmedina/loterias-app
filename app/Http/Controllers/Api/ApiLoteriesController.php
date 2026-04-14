@@ -186,7 +186,8 @@ class ApiLoteriesController extends Controller
                 "slug"       => $lotery->loterie->slug,
                 "code"       => $lotery->loterie->code,
                 "numbers"    => $lotery->numbers_formatted,
-                "image"      => $lotery->loterie->image_base64,
+                "image_base64"      => $lotery->loterie->image_base64,
+                "image"      => $lotery->loterie->image_url,
             ])
             ->values(); // Reindexar array
         return response()->json([
