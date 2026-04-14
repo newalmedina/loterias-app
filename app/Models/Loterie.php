@@ -6,13 +6,14 @@ use Attribute;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Loterie extends Model
 {
     use HasFactory;
     // Permitimos llenado masivo de todos los campos
     protected $guarded = ["id"];
-    protected $appends = ['image_base64', 'end_time', "disponible"];
+    protected $appends = ['image_url', 'image_base64', 'end_time', "disponible"];
     // Casts para booleans y horas
     protected $casts = [
         'active' => 'boolean',
@@ -98,6 +99,10 @@ class Loterie extends Model
         return 'data:' . $type . ';base64,' . base64_encode($file);
     }
 
+    public function getImageUrlAttribute()
+    {
+        return Storage::url($this->image);
+    }
     public function getDisponibleAttribute()
     {
         //si hay resultados para esta loteria y fecha no esta disponible

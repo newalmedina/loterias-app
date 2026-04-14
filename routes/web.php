@@ -35,6 +35,21 @@ Route::get('/', function () {
 
     // return view('welcome');
 });
+Route::get('/phpinfo', function () {
+
+    phpinfo();
+
+    // return view('welcome');
+});
+Route::get('/qrcode', function () {
+
+    $orders = Order::all();
+    foreach ($orders as $order) {
+        dd($order->qr_code);
+    }
+
+    // return view('welcome');
+});
 // Route::get('/landing', function () {
 
 //     return view('welcome');

@@ -7,51 +7,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderDetail extends Model
 {
-    protected $fillable = [
-        'order_id',
-        'item_id',
-        'original_price',
-        'price',
-        'taxes',
-        'quantity',
-    ];
-
-    protected $appends = [
-        'total_base_price',
-        'taxes_amount',
-        'total_with_taxes'
-    ];
+    protected $guarded = ['id'];
 
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
-    public function getProductNameFormattedAttribute(): string
+    // 🎯 Lotería principal
+    public function loterie(): BelongsTo
     {
-        return $this->item_id && $this->item
-            ? $this->item->name
-            : ($this->product_name ?? 'Sin nombre');
+        return $this->belongsTo(Loterie::class, 'loterie_id');
     }
 
-    public function item(): BelongsTo
+    // 🎯 Lotería secundaria
+    public function secondLoterie(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
-    }
-
-    public function getTotalBasePriceAttribute(): float
-    {
-        return round($this->price * $this->quantity, 2);
-    }
-    public function getTaxesAmountAttribute(): float
-    {
-        $price = round((float) $this->price, 2);
-        $taxes = round((float) $this->taxes, 2);
-
-        return round(($price * $taxes * $this->quantity) / 100, 2);
-    }
-    public function getTotalWithTaxesAttribute(): float
-    {
-        return round($this->total_base_price + $this->taxes_amount, 2);
+        return $this->belongsTo(Loterie::class, 'second_loterie_id');
     }
 }

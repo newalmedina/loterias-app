@@ -137,6 +137,14 @@ class UserResource extends Resource
                                             ->inline(false)
                                             ->label("¿Permir venta loteria?")
                                             ->required(),
+                                        Forms\Components\TextInput::make('porcentaje_comision')
+                                            ->label('Comision venta')
+                                            ->numeric()
+                                            ->suffix('%')
+                                            ->minValue(0)
+                                            ->maxValue(100)
+                                            ->step(0.01)
+                                            ->required(),
                                         Forms\Components\Toggle::make('can_admin_panel')
                                             ->inline(false)
                                             ->label("¿Permir Ingresar administración?")
@@ -253,6 +261,10 @@ class UserResource extends Resource
                 Tables\Columns\IconColumn::make('can_sales')
                     ->boolean()
                     ->label("¿Permir venta loterias?"),
+                Tables\Columns\TextColumn::make('porcentaje_comision')
+                    ->label('Comisión venta (%)')
+                    ->suffix('%')
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('can_admin_panel')
                     ->boolean()
                     ->label("¿Permir Administración?"),
@@ -329,7 +341,7 @@ class UserResource extends Resource
                     ->modalSubmitActionLabel('Si, eliminar')
                     ->modalCancelActionLabel('Cancelar')
                     ->visible(function ($record) {
-                        if ($record->assignedOrders()->count() > 0) {
+                        if ($record->createdOrders()->count() > 0) {
                             return false;
                         }
                         $currentEmail = auth()->user()->email;

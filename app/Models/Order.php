@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-
+use App\Services\QrService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Order extends Model
 {
@@ -19,10 +20,11 @@ class Order extends Model
 
     protected $guarded = [];
     protected $appends = [
-        'subtotal',
-        'impuestos',
-        'total',
-        'products', // <-- aquí lo agregas
+        'total_venta_bruto',
+        'total_comision',
+        'total_neto',
+        'total_premiado',
+        'qr_code',
     ];
 
     protected $casts = [
@@ -30,14 +32,7 @@ class Order extends Model
     ];
 
 
-    public function assignedUser()
-    {
-        return $this->belongsTo(User::class, 'assigned_user_id');
-    }
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class);
-    }
+
 
 
     public function orderDetails(): HasMany
@@ -47,18 +42,8 @@ class Order extends Model
 
     // Appointment.php
 
-    public function appointment()
-    {
-        return $this->belongsTo(Appointment::class, 'appointment_id');
-    }
 
 
-    public function getProductsAttribute(): string
-    {
-        return $this->orderDetails
-            ->map(fn($detail) => $detail->product_name_formatted)
-            ->implode(', ');
-    }
 
 
     public function getDisabledSalesAttribute(): bool
@@ -69,34 +54,32 @@ class Order extends Model
     {
         return $query->where('orders.center_id', Auth::user()->center_id);
     }
+
     private static function generateCode($order)
     {
-        if ($order->type !== 'sale') {
-            return null;
-        }
+        $date = Carbon::now();
 
-        $prefix = 'VEN';
-        $datePart = Carbon::now()->format('ymd');
+        // Fecha comprimida (base36)
+        $datePart = strtoupper(base_convert($date->format('ymd'), 10, 36));
 
-        // Obtener el último código creado (incluyendo soft deleted)
+        // Usuario (2 caracteres)
+        $userCode = strtoupper(substr(auth()->user()->username ?? 'XXX', 0, 3));
+
+        $prefix = $datePart . $userCode;
+
+        // Secuencia SOLO 2 dígitos (00-99)
         $latest = self::withTrashed()
-            ->where('type', 'sale')
-            ->whereDate('created_at', Carbon::today())
-            ->whereNotNull('code')
-            ->orderBy('id', 'desc')
+            ->whereDate('created_at', $date->toDateString())
+            ->where('code', 'like', $prefix . '%')
+            ->orderByDesc('id')
             ->first();
 
-        if ($latest && Str::startsWith($latest->code, $prefix . $datePart)) {
-            // Extraer la secuencia numérica del código (últimos 3 dígitos)
-            $lastSequence = (int) substr($latest->code, -3);
-            $nextSequence = $lastSequence + 1;
-        } else {
-            $nextSequence = 1;
-        }
+        $nextSequence = $latest
+            ? ((int) substr($latest->code, -2) + 1)
+            : 1;
 
-        // Buscar un código que no exista (incluyendo soft deleted)
         do {
-            $code = $prefix . $datePart . str_pad($nextSequence, 3, '0', STR_PAD_LEFT);
+            $code = $prefix . str_pad($nextSequence, 2, '0', STR_PAD_LEFT);
 
             $exists = self::withTrashed()
                 ->where('code', $code)
@@ -118,8 +101,13 @@ class Order extends Model
         static::creating(function ($order) {
             if (Auth::check()) {
                 $order->created_by = Auth::id();
+                // $order->assigned_user_id = Auth::id();
+
+                $order->porcentaje_comision = Auth::user()->porcentaje_comision;
                 $order->code = self::generateCode($order);
                 $order->center_id = Auth::user()->center_id;
+
+                $order->uuid = Str::uuid();
             }
         });
 
@@ -142,55 +130,35 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'deleted_by');
     }
-
-    public function getSubtotalAttribute(): float
+    public function getTotalVentaBrutoAttribute(): float
     {
-        return round($this->orderDetails->sum('total_base_price'), 2);
+        return round((float) $this->orderDetails->sum('monto_jugada'), 2);
     }
 
-    public function getImpuestosAttribute(): float
+    public function getTotalComisionAttribute(): float
     {
-        return round($this->orderDetails->sum('taxes_amount'), 2);
+        $total = $this->total_venta_bruto;
+
+        return round($total * ($this->porcentaje_comision / 100), 2);
     }
 
-    public function getTotalAttribute(): float
+    public function getTotalNetoAttribute(): float
     {
-        return round($this->subtotal + $this->impuestos, 2);
-    }
-    public function scopeWithCalculatedTotals(Builder $query): Builder
-    {
-        return $query
-            ->select('orders.*') // Muy importante para que no se sobrescriba la query base
-            ->selectSub(
-                'SELECT COALESCE(SUM(price * quantity), 0)
-             FROM order_details
-             WHERE order_details.order_id = orders.id',
-                'subtotal'
-            )
-            ->selectSub(
-                'SELECT COALESCE(SUM((price * taxes * quantity) / 100), 0)
-             FROM order_details
-             WHERE order_details.order_id = orders.id',
-                'impuestos'
-            )
-            ->selectSub(
-                'SELECT COALESCE(SUM((price * quantity) + ((price * taxes * quantity) / 100)), 0)
-             FROM order_details
-             WHERE order_details.order_id = orders.id',
-                'total'
-            );
+        return round(
+            $this->total_venta_bruto - $this->total_comision,
+            2
+        );
     }
 
-    public function scopeSales($query)
+    public function getTotalPremiadoAttribute(): float
     {
-        return $query->where('type', "sale");
+        return round((float) $this->orderDetails->sum('monto_premio'), 2);
     }
-    public function scopeInvoiced($query)
+
+    public function getQrCodeAttribute()
     {
-        return $query->where('status', "invoiced");
-    }
-    public function scopePending($query)
-    {
-        return $query->where('status', "pending");
+        $svg = QrCode::size(200)->generate('Make me into a QrCode!');
+
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ApiLoteriesController;
 use App\Http\Controllers\AppiAppointmentController;
 use App\Http\Controllers\Api\ApiAuthController;
+use App\Http\Controllers\Api\ApiVentasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +33,9 @@ Route::middleware(['auth:sanctum', 'check.active'])->group(function () {
     Route::get('/loteries/get-results', [ApiLoteriesController::class, 'getResults']);
 
     Route::get('validate-token', [ApiAuthController::class, 'validateToken']);
-    Route::post('logout', [ApiAuthController::class, 'logout']);
+    Route::post('/ventas/finalizar', [ApiVentasController::class, 'finalizarVenta']);
 
+    Route::post('logout', [ApiAuthController::class, 'logout']);
     // Route::get(
     //     'appointments/by-range-date',
     //     [AppiAppointmentController::class, 'getAppointmentByRangeOfDate']

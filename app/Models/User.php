@@ -117,9 +117,9 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Timesheet::class);
     }
     // User.php
-    public function assignedOrders()
+    public function createdOrders()
     {
-        return $this->hasMany(Order::class, 'assigned_user_id');
+        return $this->hasMany(Order::class, 'created_by');
     }
     // Relación con Center
     public function center()
