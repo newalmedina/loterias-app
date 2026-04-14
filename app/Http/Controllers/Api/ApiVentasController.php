@@ -57,8 +57,8 @@ class ApiVentasController extends Controller
             ]);
         }
         return response()->json([
-            'success' => true,
-            'message' => 'Venta finalizada correctamente',
+            'success' => false,
+            'message' => 'Ha ocurrido un error',
             'messageList' => $errorMessage,
         ]);
     }
