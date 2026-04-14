@@ -36,7 +36,7 @@ class ApiVentasController extends Controller
                 'order_id' => $order->id,
                 'loterie_id' => $detalle['loteriaId'],
                 'second_loterie_id' => $detalle['loteriaSecondId'] ?? null,
-                'number' => $detalle['numero'],
+                'number' => str_replace('-', '', $detalle['numero']),
                 'type' => $detalle['tipo'],
                 'monto_jugada' => $detalle['monto'],
             ]);
