@@ -27,24 +27,39 @@ class ApiVentasController extends Controller
             'detalles.*.loteriaSecondId' => 'nullable|integer',
         ]);
 
-        $order = Order::create([
-            'date' => now(),
-        ]);
 
-        foreach ($request->detalles as $detalle) {
-            OrderDetail::create([
-                'order_id' => $order->id,
-                'loterie_id' => $detalle['loteriaId'],
-                'second_loterie_id' => $detalle['loteriaSecondId'] ?? null,
-                'number' => str_replace('-', '', $detalle['numero']),
-                'type' => $detalle['tipo'],
-                'monto_jugada' => $detalle['monto'],
+        $error = true;
+
+        $errorMessage = [
+            "Loteria Nac. cerrada",
+            "Num. 70 para  la lot, Nac supera el limite de 20$ habiendose jugado 10-20€",
+        ];
+
+        if (!$error) {
+            $order = Order::create([
+                'date' => now(),
+            ]);
+
+            foreach ($request->detalles as $detalle) {
+                OrderDetail::create([
+                    'order_id' => $order->id,
+                    'loterie_id' => $detalle['loteriaId'],
+                    'second_loterie_id' => $detalle['loteriaSecondId'] ?? null,
+                    'number' => str_replace('-', '', $detalle['numero']),
+                    'type' => $detalle['tipo'],
+                    'monto_jugada' => $detalle['monto'],
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Venta finalizada correctamente',
             ]);
         }
-
         return response()->json([
             'success' => true,
             'message' => 'Venta finalizada correctamente',
+            'messageList' => $errorMessage,
         ]);
     }
 }
