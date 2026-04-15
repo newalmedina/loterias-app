@@ -45,7 +45,7 @@ class ApiVentasController extends Controller
 
                 if (!$loteria->disponible) {
 
-                    $errorMessage[] = "$loteria->short_name ya ha cerrado ventas ($tipo)";
+                    $errorMessage[] = "$loteria->short_name ya ha cerrado ventas";
                 }
             }
             if ($detalle["loteriaSecondId"]) {
