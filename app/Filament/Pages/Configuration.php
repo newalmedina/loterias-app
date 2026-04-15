@@ -68,6 +68,33 @@ class Configuration extends Page
                 'mail_enable_integration' => $center->mail_enable_integration,
                 'enable_start_message' => $center->enable_start_message,
                 'enable_end_message' => $center->enable_end_message,
+                // ================= CONFIG JUGADAS =================
+                'min_antes_bloqueo' => $center->min_antes_bloqueo,
+                'monto_maximo_quinielas' => $center->monto_maximo_quinielas,
+
+                // Quiniela
+                'quiniela_primer_premio' => $center->quiniela_primer_premio,
+                'quiniela_segundo_premio' => $center->quiniela_segundo_premio,
+                'quiniela_tercer_premio' => $center->quiniela_tercer_premio,
+                'quiniela_monto_soportado' => $center->quiniela_monto_soportado,
+
+                // Palé
+                'pale_primer_premio' => $center->pale_primer_premio,
+                'pale_segundo_premio' => $center->pale_segundo_premio,
+                'pale_tercer_premio' => $center->pale_tercer_premio,
+                'pale_monto_soportado' => $center->pale_monto_soportado,
+
+                // Super Palé
+                'suppale_primer_premio' => $center->suppale_primer_premio,
+                'suppale_segundo_premio' => $center->suppale_segundo_premio,
+                'suppale_tercer_premio' => $center->suppale_tercer_premio,
+                'suppale_monto_soportado' => $center->suppale_monto_soportado,
+
+                // Tripleta
+                'tripleta_primer_premio' => $center->tripleta_primer_premio,
+                'tripleta_segundo_premio' => $center->tripleta_segundo_premio,
+                'tripleta_tercer_premio' => $center->tripleta_tercer_premio,
+                'tripleta_monto_soportado' => $center->tripleta_monto_soportado,
             ]);
         }
     }
@@ -78,10 +105,11 @@ class Configuration extends Page
             ->schema([
                 Grid::make(12)
                     ->schema([
+
                         Section::make('Imagen')
                             ->columnSpan([
-                                'default' => 12, // móvil
-                                'md' => 3,       // escritorio
+                                'default' => 12,
+                                'md' => 3,
                             ])
                             ->schema([
                                 FileUpload::make('image')
@@ -92,252 +120,158 @@ class Configuration extends Page
                                     ->columnSpanFull(),
                             ]),
 
-
                         Tabs::make('Configuraciones')
                             ->columnSpan([
                                 'default' => 12,
                                 'md' => 9,
                             ])
                             ->tabs([
-                                // --- Pestaña de Información General ---
+
+                                // ================= INFORMACIÓN GENERAL =================
                                 Tab::make('Información general')
                                     ->schema([
                                         Grid::make(2)
                                             ->schema([
+
                                                 Actions::make([
                                                     FormAction::make('sendTestEmail')
                                                         ->label('Enviar correo de prueba')
                                                         ->icon('heroicon-o-envelope')
-                                                        ->color('warning') // azul
+                                                        ->color('warning')
                                                         ->action(function (): void {
-                                                            $email = Auth()->user()->email;
+                                                            $email = Auth::user()->email;
 
-                                                            Mail::to(Auth()->user()->email)->send(new TestMail(Auth()->user()));
+                                                            Mail::to($email)->send(new TestMail(Auth::user()));
 
                                                             Notification::make()
-                                                                ->title('Correo de prueba enviado a ' . $email)
+                                                                ->title('Correo enviado a ' . $email)
                                                                 ->success()
                                                                 ->send();
                                                         }),
+
                                                     FormAction::make('downloadOldBackup')
                                                         ->label('Descargar BBDD Antigua')
                                                         ->icon('heroicon-o-arrow-down')
                                                         ->extraAttributes([
-                                                            'style' => 'background-color: #6B21A8; color: white;' // púrpura y texto blanco
+                                                            'style' => 'background-color: #6B21A8; color: white;',
                                                         ])
-                                                        ->visible(fn() => auth()->check() && auth()->user()->email === 'el.solitions@gmail.com')
-                                                        //  ->visible(false)
-
+                                                        ->visible(fn() => auth()->user()?->super_admin == true)
                                                         ->form([
                                                             TextInput::make('filename')
                                                                 ->label('Nombre del archivo')
-                                                                ->required()
-                                                                ->placeholder('Ejemplo: laravel-backup/2025-07-22-19-54-30.zip'),
+                                                                ->required(),
                                                         ])
                                                         ->action(function (array $data, $livewire) {
-                                                            $filename = $data['filename'];
+                                                            $url = route('filament.backups.download', [
+                                                                'filepath' => $data['filename']
+                                                            ]);
 
-                                                            // Validar o sanitizar filename si quieres
-
-                                                            // Ruta de descarga generada
-                                                            $url = route('filament.backups.download', ['filepath' => $filename]);
-
-                                                            // Redirigir usando Livewire
                                                             $livewire->redirect($url);
                                                         }),
+                                                ]),
 
-
-
-                                                ])->visible(fn() => auth()->check() && auth()->user()?->super_admin == true),
-                                                // Actions::make([
-                                                //     FormAction::make('updateGmailToken')
-                                                //         ->label('Actualizar Token Gmail')
-                                                //         ->icon('heroicon-o-arrow-path')
-                                                //         ->extraAttributes([
-                                                //             'style' => 'background-color: #0ad3eeff; color: white;'
-                                                //         ])
-                                                //         ->action(function (): void {
-                                                //             $output = Artisan::call('mail:generate-auth-url');
-                                                //             $url = Artisan::output(); // <- obtiene la salida del comando
-
-                                                //             // Extrae la URL de la salida (por si hay texto adicional)
-                                                //             preg_match('/https?:\/\/[^\s]+/', $url, $matches);
-                                                //             $authUrl = $matches[0] ?? null;
-
-                                                //             if ($authUrl) {
-
-                                                //                 dd($authUrl);
-                                                //             } else {
-                                                //                 Notification::make()
-                                                //                     ->title('Error')
-                                                //                     ->body('No se pudo generar la URL de autorización.')
-                                                //                     ->danger()
-                                                //                     ->send();
-                                                //             }
-                                                //         }),
-                                                //     FormAction::make('updateReservas')
-                                                //         ->label('Actualizar Reservas gmail')
-                                                //         ->icon('heroicon-o-arrow-down')
-                                                //         ->extraAttributes([
-                                                //             'style' => 'background-color: #d10755ff; color: white;'
-                                                //         ])
-                                                //         ->visible(fn() => auth()->check() && auth()->user()?->can_show_general_resource == true)
-                                                //         ->form([
-                                                //             TextInput::make('minutos')
-                                                //                 ->label('Número de minutos')
-                                                //                 ->numeric()
-                                                //                 ->minValue(1)
-                                                //                 ->default(60)
-                                                //                 ->required()
-                                                //                 ->placeholder('Ejemplo: 60 (número de minutos)')
-
-                                                //         ])
-                                                //         ->action(function (array $data, $livewire) {
-                                                //             $minutos = $data['minutos'];
-
-                                                //             // Ejecutamos el comando con el parámetro y la opción --error=true
-                                                //             \Artisan::call('actualizar_reservas', [
-                                                //                 'tiempo' => $minutos,
-                                                //                 '--error' => true,
-                                                //             ]);
-
-                                                //             // (Opcional) obtener la salida del comando
-                                                //             $output = \Artisan::output();
-                                                //             dd($output);
-                                                //             // Puedes mostrar un mensaje en Filament
-                                                //             // $livewire->notify('success', "Comando ejecutado correctamente. Salida: {$output}");
-                                                //         }),
-                                                //     FormAction::make('sendTestEmail')
-                                                //         ->label('Enviar correo de prueba')
-                                                //         ->icon('heroicon-o-envelope')
-                                                //         ->color('warning')
-                                                //         ->action(function (): void {
-                                                //             $email = Auth()->user()->email;
-
-                                                //             Mail::to($email)->send(new TestMail(Auth()->user()));
-
-                                                //             Notification::make()
-                                                //                 ->title('Correo de prueba enviado a ' . $email)
-                                                //                 ->success()
-                                                //                 ->send();
-                                                //         }),
-
-                                                //     FormAction::make('downloadOldBackup')
-                                                //         ->label('Descargar BBDD Antigua')
-                                                //         ->icon('heroicon-o-arrow-down')
-                                                //         ->extraAttributes([
-                                                //             'style' => 'background-color: #6B21A8; color: white;'
-                                                //         ])
-                                                //         ->visible(fn() => auth()->check() && auth()->user()?->can_show_general_resource == true)
-                                                //         ->form([
-                                                //             TextInput::make('filename')
-                                                //                 ->label('Nombre del archivo')
-                                                //                 ->required()
-                                                //                 ->placeholder('Ejemplo: laravel-backup/2025-07-22-19-54-30.zip'),
-                                                //         ])
-                                                //         ->action(function (array $data, $livewire) {
-                                                //             $filename = $data['filename'];
-                                                //             $url = route('filament.backups.download', ['filepath' => $filename]);
-                                                //             $livewire->redirect($url);
-                                                //         }),
-                                                // ]),
-
-                                                TextInput::make('name')->label('Nombre')->required()->maxLength(255),
-                                                TextInput::make('nif')->label('NIF/CIF')->required()->maxLength(255),
-                                                TextInput::make('email')->label('Correo')->required()->email()->maxLength(255),
-                                                TextInput::make('phone')->label('Teléfono')->tel()->maxLength(255),
-                                                TextInput::make('address')->label('Dirección')->maxLength(255),
-                                                TextInput::make('postal_code')->label('Código postal')->maxLength(255),
+                                                TextInput::make('name')->required(),
+                                                TextInput::make('nif')->required(),
+                                                TextInput::make('email')->email()->required(),
+                                                TextInput::make('phone'),
+                                                TextInput::make('address'),
+                                                TextInput::make('postal_code'),
 
                                                 Select::make('country_id')
                                                     ->label('País')
-                                                    ->options(fn() => \App\Models\Country::pluck('name', 'id'))
-                                                    ->searchable(),
+                                                    ->options(fn() => \App\Models\Country::pluck('name', 'id')),
 
                                                 Select::make('state_id')
                                                     ->label('Estado')
-                                                    ->options(fn(Get $get) => \App\Models\State::where('country_id', $get('country_id'))->pluck('name', 'id'))
-                                                    ->searchable()
-                                                    ->preload()
+                                                    ->options(
+                                                        fn(Get $get) =>
+                                                        \App\Models\State::where('country_id', $get('country_id'))
+                                                            ->pluck('name', 'id')
+                                                    )
                                                     ->live()
                                                     ->afterStateUpdated(fn(Set $set) => $set('city_id', null)),
 
                                                 Select::make('city_id')
-                                                    ->label('Cidade')
-                                                    ->options(fn(Get $get) => \App\Models\City::where('state_id', $get('state_id'))->pluck('name', 'id'))
-                                                    ->searchable()
-                                                    ->preload()
-                                                    ->live(),
+                                                    ->label('Ciudad')
+                                                    ->options(
+                                                        fn(Get $get) =>
+                                                        \App\Models\City::where('state_id', $get('state_id'))
+                                                            ->pluck('name', 'id')
+                                                    ),
 
-                                                TextInput::make('bank_name')->label('Entidad bancaria')->maxLength(255),
-                                                TextInput::make('bank_number')->label('Número de cuenta')->maxLength(255),
+                                                TextInput::make('bank_name'),
+                                                TextInput::make('bank_number'),
 
-                                                ColorPicker::make('primary_color')
-                                                    ->label('Color Primario'),
-                                                ColorPicker::make('primary_color_soft')
-                                                    ->label('Color Primario suave'),
+                                                ColorPicker::make('primary_color'),
+                                                ColorPicker::make('primary_color_soft'),
                                             ]),
                                     ]),
 
-                                // --- Pestaña de Notificaciones ---
-                                // Tab::make('Notificaciones')
-                                //     ->schema([
-                                //         Toggle::make('mail_enable_integration')
-                                //             ->label('¿Habilitar integración de correo?')
-                                //             ->columnSpan([
-                                //                 'default' => 12, // móvil
-                                //                 'md' => 6,       // escritorio
-                                //             ])
-                                //             ->inline(false)
-                                //             ->default(false)
-                                //             ->disabled(),
-                                //         Toggle::make('enable_start_message')
-                                //             ->label('¿Activar mensaje inicio alquiler?')
-                                //             ->columnSpan([
-                                //                 'default' => 12,
-                                //                 'md' => 6,
-                                //             ])
-                                //             ->inline(false)
-                                //             ->default(false)
-                                //             ->reactive(), // <-- hace que otros campos reaccionen al cambio
+                                // ================= CONFIGURACIÓN DE JUGADAS (NUEVO TAB) =================
+                                Tab::make('Configuración de jugadas')
+                                    ->schema([
 
-                                //         // TinyEditor::make('start_message')
-                                //         //     ->label("Mensaje antes alquiler")
-                                //         //     ->fileAttachmentsDisk('public')
-                                //         //     ->fileAttachmentsVisibility('public')
-                                //         //     ->fileAttachmentsDirectory('uploads')
-                                //         //     ->profile('default')
-                                //         //     ->columnSpan('full')
-                                //         //     ->required(fn($get) => $get('enable_start_message')) // obligatorio solo si toggle es true
-                                //         //     ->reactive(), // <-- importante para que muestre validación en tiempo real
+                                        Section::make('Configuración general')
+                                            ->schema([
+                                                Grid::make(2)
+                                                    ->schema([
+                                                        TextInput::make('min_antes_bloqueo')
+                                                            ->label('Minutos antes de bloqueo')
+                                                            ->numeric()
+                                                            ->default(0),
 
-                                //         Toggle::make('enable_end_message')
-                                //             ->label('¿Activar mensaje fin alquiler?')
-                                //             ->columnSpan([
-                                //                 'default' => 12,
-                                //                 'md' => 6,
-                                //             ])
-                                //             ->inline(false)
-                                //             ->default(false)
-                                //             ->reactive(),
+                                                        TextInput::make('monto_maximo_quinielas')
+                                                            ->label('Monto máximo quinielas')
+                                                            ->numeric()
+                                                            ->default(0),
+                                                    ]),
+                                            ]),
 
-                                //         // TinyEditor::make('end_message')
-                                //         //     ->label("Mensaje después alquiler")
-                                //         //     ->fileAttachmentsDisk('public')
-                                //         //     ->fileAttachmentsVisibility('public')
-                                //         //     ->fileAttachmentsDirectory('uploads')
-                                //         //     ->profile('full')
-                                //         //     ->columnSpan('full')
-                                //         //     ->required(fn($get) => $get('enable_end_message'))
-                                //         //     ->reactive(),
+                                        Section::make('Quiniela')
+                                            ->schema([
+                                                Grid::make(4)
+                                                    ->schema([
+                                                        TextInput::make('quiniela_primer_premio')->label('1er Premio')->numeric(),
+                                                        TextInput::make('quiniela_segundo_premio')->label('2do Premio')->numeric(),
+                                                        TextInput::make('quiniela_tercer_premio')->label('3er Premio')->numeric(),
+                                                        TextInput::make('quiniela_monto_soportado')->label('Monto soportado')->numeric(),
+                                                    ]),
+                                            ]),
 
+                                        Section::make('Palé')
+                                            ->schema([
+                                                Grid::make(4)
+                                                    ->schema([
+                                                        TextInput::make('pale_primer_premio')->label('1er Premio')->numeric(),
+                                                        TextInput::make('pale_segundo_premio')->label('2do Premio')->numeric(),
+                                                        TextInput::make('pale_tercer_premio')->label('3er Premio')->numeric(),
+                                                        TextInput::make('pale_monto_soportado')->label('Monto soportado')->numeric(),
+                                                    ]),
+                                            ]),
 
+                                        Section::make('Super Palé')
+                                            ->schema([
+                                                Grid::make(4)
+                                                    ->schema([
+                                                        TextInput::make('suppale_primer_premio')->label('1er Premio')->numeric(),
+                                                        TextInput::make('suppale_segundo_premio')->label('2do Premio')->numeric(),
+                                                        TextInput::make('suppale_tercer_premio')->label('3er Premio')->numeric(),
+                                                        TextInput::make('suppale_monto_soportado')->label('Monto soportado')->numeric(),
+                                                    ]),
+                                            ]),
 
-
-                                //     ]),
+                                        Section::make('Tripleta')
+                                            ->schema([
+                                                Grid::make(4)
+                                                    ->schema([
+                                                        TextInput::make('tripleta_primer_premio')->label('1er Premio')->numeric(),
+                                                        TextInput::make('tripleta_segundo_premio')->label('2do Premio')->numeric(),
+                                                        TextInput::make('tripleta_tercer_premio')->label('3er Premio')->numeric(),
+                                                        TextInput::make('tripleta_monto_soportado')->label('Monto soportado')->numeric(),
+                                                    ]),
+                                            ]),
+                                    ]),
                             ]),
-
-
                     ]),
             ])
             ->statePath('data');

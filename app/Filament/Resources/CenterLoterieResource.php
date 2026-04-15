@@ -107,9 +107,6 @@ class CenterLoterieResource extends Resource
                                 })
                                 ->columnSpan(6),
 
-
-
-
                             // Activo
                             Toggle::make('active')
                                 ->label('Activo')
@@ -117,21 +114,6 @@ class CenterLoterieResource extends Resource
                                 ->default(true)
                                 ->columnSpan(3),
 
-                            // Min bloqueo
-                            TextInput::make('min_bloqueo')
-                                ->label('Mínimo Bloqueo')
-                                ->numeric()
-                                ->default(10)
-                                ->required()
-                                ->columnSpan(3),
-
-                            // Máximo soportado
-                            TextInput::make('maximo_soportado')
-                                ->label('Máximo Soportado')
-                                ->numeric()
-                                ->default(0)
-                                ->required()
-                                ->columnSpan(3),
                             Placeholder::make('time_zone')
                                 ->label('Zona horaria')
                                 ->columnSpan(3)
@@ -238,8 +220,6 @@ class CenterLoterieResource extends Resource
                 IconColumn::make('active')->boolean()->label('Activo'),
 
                 // Min y max
-                TextColumn::make('min_bloqueo')->label('Mínimo Bloqueo'),
-                TextColumn::make('maximo_soportado')->label('Máximo Soportado'),
             ])
             ->filters([
                 // Filtro por nombre de lotería

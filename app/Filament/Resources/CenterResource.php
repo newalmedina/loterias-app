@@ -205,15 +205,7 @@ class CenterResource extends Resource
                                                             ->live()
                                                             ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
-                                                        TextInput::make('maximo_soportado')
-                                                            ->label('Monto máximo soportado por numero (€)')
-                                                            ->numeric()->required()
-                                                            ->default(99),
 
-                                                        TextInput::make('min_bloqueo')
-                                                            ->label('Minutos Bloqueo cierre')
-                                                            ->numeric()->required()
-                                                            ->default(10),
 
                                                         Toggle::make('active')
                                                             ->label('¿Activo?')
@@ -261,6 +253,157 @@ class CenterResource extends Resource
                                                     ->createItemButtonLabel('Añadir Lotería')
                                             ])
                                     ]),
+
+                                Tabs\Tab::make('Configuración de jugadas')
+                                    ->schema([
+
+                                        // ================= CONFIG GENERAL =================
+                                        Forms\Components\Section::make('Configuración general')
+                                            ->schema([
+                                                Grid::make()
+                                                    ->columns([
+                                                        'default' => 1,
+                                                        'md' => 2,
+                                                    ])
+                                                    ->schema([
+                                                        Forms\Components\TextInput::make('min_antes_bloqueo')
+                                                            ->label('Minutos antes de bloqueo')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('monto_maximo_quinielas')
+                                                            ->label('Monto máximo quinielas')
+                                                            ->numeric()
+                                                            ->default(0),
+                                                    ]),
+                                            ]),
+
+                                        // ================= QUINIELA =================
+                                        Forms\Components\Section::make('Quiniela')
+                                            ->schema([
+                                                Grid::make()
+                                                    ->columns([
+                                                        'default' => 1,
+                                                        'md' => 4,
+                                                    ])
+                                                    ->schema([
+                                                        Forms\Components\TextInput::make('quiniela_primer_premio')
+                                                            ->label('1er Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('quiniela_segundo_premio')
+                                                            ->label('2do Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('quiniela_tercer_premio')
+                                                            ->label('3er Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('quiniela_monto_soportado')
+                                                            ->label('Monto soportado')
+                                                            ->numeric()
+                                                            ->default(0),
+                                                    ]),
+                                            ]),
+
+                                        // ================= PALÉ =================
+                                        Forms\Components\Section::make('Palé')
+                                            ->schema([
+                                                Grid::make()
+                                                    ->columns([
+                                                        'default' => 1,
+                                                        'md' => 4,
+                                                    ])
+                                                    ->schema([
+                                                        Forms\Components\TextInput::make('pale_primer_premio')
+                                                            ->label('1er Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('pale_segundo_premio')
+                                                            ->label('2do Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('pale_tercer_premio')
+                                                            ->label('3er Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('pale_monto_soportado')
+                                                            ->label('Monto soportado')
+                                                            ->numeric()
+                                                            ->default(0),
+                                                    ]),
+                                            ]),
+
+                                        // ================= SUPPALÉ =================
+                                        Forms\Components\Section::make('Super Palé')
+                                            ->schema([
+                                                Grid::make()
+                                                    ->columns([
+                                                        'default' => 1,
+                                                        'md' => 4,
+                                                    ])
+                                                    ->schema([
+                                                        Forms\Components\TextInput::make('suppale_primer_premio')
+                                                            ->label('1er Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('suppale_segundo_premio')
+                                                            ->label('2do Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('suppale_tercer_premio')
+                                                            ->label('3er Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('suppale_monto_soportado')
+                                                            ->label('Monto soportado')
+                                                            ->numeric()
+                                                            ->default(0),
+                                                    ]),
+                                            ]),
+
+                                        // ================= TRIPLETA =================
+                                        Forms\Components\Section::make('Tripleta')
+                                            ->schema([
+                                                Grid::make()
+                                                    ->columns([
+                                                        'default' => 1,
+                                                        'md' => 4,
+                                                    ])
+                                                    ->schema([
+                                                        Forms\Components\TextInput::make('tripleta_primer_premio')
+                                                            ->label('1er Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('tripleta_segundo_premio')
+                                                            ->label('2do Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('tripleta_tercer_premio')
+                                                            ->label('3er Premio')
+                                                            ->numeric()
+                                                            ->default(0),
+
+                                                        Forms\Components\TextInput::make('tripleta_monto_soportado')
+                                                            ->label('Monto soportado')
+                                                            ->numeric()
+                                                            ->default(0),
+                                                    ]),
+                                            ]),
+
+                                    ])
+
                             ])
 
 

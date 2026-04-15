@@ -6,6 +6,7 @@ use Attribute;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class Loterie extends Model
@@ -121,8 +122,10 @@ class Loterie extends Model
 
 
         //validar si aun le faltan los 10 min para tirar la loteria
+        $minutosAntesCierre = Auth::user()?->center?->min_antes_bloqueo ?? 10;
+
         $horaFinDate = Carbon::parse($this->end_time)
-            ->subMinutes(10);
+            ->subMinutes($minutosAntesCierre);
 
         return $date->lt($horaFinDate);
     }
