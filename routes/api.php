@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum', 'check.active'])->group(function () {
 
     Route::get('validate-token', [ApiAuthController::class, 'validateToken']);
     Route::post('/ventas/finalizar', [ApiVentasController::class, 'finalizarVenta']);
+    Route::get('/ventas/search-venta', [ApiVentasController::class, 'searchVenta']);
 
     Route::post('logout', [ApiAuthController::class, 'logout']);
     // Route::get(

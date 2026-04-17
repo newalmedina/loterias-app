@@ -34,6 +34,13 @@ class Order extends Model
 
 
 
+    public function paidBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'paid_by');
+    }
+
+
+
 
     public function orderDetails(): HasMany
     {
@@ -50,11 +57,23 @@ class Order extends Model
     {
         return $this->status == 'invoiced';
     }
+    // public function scopeMyCenter($query)
+    // {
+    //     return $query->where('orders.center_id', Auth::user()->center_id);
+    // }
+
     public function scopeMyCenter($query)
     {
-        return $query->where('orders.center_id', Auth::user()->center_id);
-    }
+        $user = Auth::user();
 
+        $query->where('orders.center_id', $user->center_id);
+
+        if (!$user->show_all_orders) {
+            $query->where('orders.created_by', $user->id);
+        }
+
+        return $query;
+    }
     private static function generateCode($order)
     {
         $date = Carbon::now();

@@ -131,4 +131,156 @@ class ApiVentasController extends Controller
             'messageList' => $errorMessage,
         ]);
     }
+
+    public function searchVenta(Request $request)
+    {
+        $onlyTrash = $request->boolean('onlyTrash', false);
+        $query = Order::query()
+            ->with([
+                'orderDetails' => function ($q) use ($request) {
+
+                    if (!empty($request->loteriaIds)) {
+                        $q->whereIn('loterie_id', $request->loteriaIds)
+                            ->orWhereIn('second_loterie_id', $request->loteriaIds);
+                    }
+
+                    if (!empty($request->loteria)) {
+                        $q->whereIn('loterie_id', $request->loteria);
+                    }
+
+                    if (!empty($request->type)) {
+                        $q->whereIn('type', $request->type);
+                    }
+
+                    $q->with(['loterie', 'secondLoterie']);
+                }
+            ])
+            ->myCenter();
+
+        if ($onlyTrash) {
+            $query->onlyTrashed();
+        }
+        // 📅 FILTRO POR FECHAS
+        if ($request->fecha_inicio) {
+            $query->whereDate('date', '>=', $request->fecha_inicio);
+        }
+
+        if ($request->fecha_fin) {
+            $query->whereDate('date', '<=', $request->fecha_fin);
+        }
+
+        // 🎟️ FILTRO POR CÓDIGO DE TICKET
+        if ($request->code) {
+            $query->where('code', 'like', $request->code . '%');
+        }
+
+        // 🎯 FILTRO POR LOTERÍAS (orderDetails)
+        if (!empty($request->loteriaIds)) {
+            $query->whereHas('orderDetails', function ($q) use ($request) {
+                $q->whereIn('loterie_id', $request->loteriaIds)
+                    ->orWhereIn('second_loterie_id', $request->loteriaIds);
+            });
+        }
+
+        // 🆕 FILTRO POR LOTERÍA DIRECTA (si aplica a la tabla orders)
+        if (!empty($request->loteria)) {
+            $query->whereHas('orderDetails', function ($q) use ($request) {
+
+                $q->whereIn('loterie_id', $request->loteria);
+            });
+        }
+
+        // 🆕 FILTRO POR TYPE
+        if (!empty($request->type)) {
+            $query->whereHas('orderDetails', function ($q) use ($request) {
+
+                $q->whereIn('order_details.type', $request->type); // ['Qui', 'Pal', 'SPal', 'Tri']
+            });
+        }
+
+        // 🆕 FILTRO POR CREATED_BY
+        if (!empty($request->created_by)) {
+            $query->where('created_by', $request->created_by);
+        }
+
+        // 🏆 FILTRO PREMIADOS / NO PREMIADOS
+        if ($request->premiado !== null) {
+            if ($request->premiado) {
+                $query->whereHas('orderDetails', function ($q) {
+                    $q->where('premiado', 1);
+                });
+            } else {
+                $query->whereDoesntHave('orderDetails', function ($q) {
+                    $q->where('premiado', 0);
+                });
+            }
+        }
+
+        // 💰 FILTRO PAGADOS / NO PAGADOS
+        if ($request->pagado !== null) {
+            if ($request->pagado) {
+                $query->whereNotNull('paid_at');
+            } else {
+                $query->whereNull('paid_at');
+            }
+        }
+
+        // 📊 ORDEN Y RESULTADO
+        $orders = $query->latest()->get();
+
+        $result = [];
+
+        foreach ($orders as $order) {
+            $details = [];
+
+            foreach ($order->orderDetails as $detail) {
+                $details[] = [
+                    'id' => $detail->id,
+                    'loterie_id' => $detail->loterie_id,
+                    'loterie_nombre' => $detail->loterie->nombre ?? null,
+
+                    'second_loterie_id' => $detail->second_loterie_id,
+                    'second_loterie_nombre' => $detail->secondLoterie->nombre ?? null,
+
+                    'number' => $detail->number,
+                    'type' => $detail->type,
+                    'monto_jugada' => $detail->monto_jugada,
+                    'premiado' => $detail->premiado,
+                ];
+            }
+
+            $result[] = [
+                'id' => $order->id,
+                'code' => $order->code,
+                'date' => $order->date,
+
+                'created_by' => $order->created_by,
+                'created_by_name' => $order->createdBy?->name,
+                'created_by_code' => $order->createdBy?->code,
+
+                'paid_at' => $order->paid_at,
+                'paid_by' => $order->paid_by,
+                'paid_by_name' => $order->paidBy?->name,
+                'paid_by_code' => $order->paidBy?->code,
+
+                'deleted_at' => $order->deleted_at,
+                'deleted_by' => $order->deleted_by,
+                'deleted_by_name' => $order->deletedBy?->name,
+                'deleted_by_code' => $order->deletedBy?->code,
+
+                'porcentaje_comision' => $order->porcentaje_comision,
+
+                // 🔥 APPENDS
+                'total_venta_bruto' => $order->total_venta_bruto,
+                'total_comision' => $order->total_comision,
+                'total_neto' => $order->total_neto,
+                'total_premiado' => $order->total_premiado,
+                'qr_code' => $order->qr_code,
+
+                'details' => $details
+            ];
+        }
+
+        return response()->json($result);
+    }
 }
