@@ -253,6 +253,7 @@ class ApiVentasController extends Controller
                 'id' => $order->id,
                 'code' => $order->code,
                 'date' => $order->date,
+                'premiado' => $order->premiado,
 
                 'created_by' => $order->created_by,
                 'created_by_name' => $order->createdBy?->name,
