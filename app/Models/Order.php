@@ -25,6 +25,8 @@ class Order extends Model
         'total_neto',
         'total_premiado',
         'qr_code',
+
+        'premiado', // 👈 NUEVO
     ];
 
     protected $casts = [
@@ -51,7 +53,12 @@ class Order extends Model
 
 
 
-
+    public function getPremiadoAttribute(): bool
+    {
+        return $this->orderDetails->contains(function ($detail) {
+            return (int) $detail->premiado === 1;
+        });
+    }
 
     public function getDisabledSalesAttribute(): bool
     {
