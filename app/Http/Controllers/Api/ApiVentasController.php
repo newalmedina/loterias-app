@@ -265,6 +265,7 @@ class ApiVentasController extends Controller
                 'paid_by_code' => $order->paidBy?->username,
 
                 'deleted_at' => $order->deleted_at,
+                'created_at' => $order->created_at,
                 'deleted_by' => $order->deleted_by,
                 'deleted_by_name' => $order->deletedBy?->name,
                 'deleted_by_code' => $order->deletedBy?->username,
