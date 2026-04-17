@@ -256,17 +256,17 @@ class ApiVentasController extends Controller
 
                 'created_by' => $order->created_by,
                 'created_by_name' => $order->createdBy?->name,
-                'created_by_code' => $order->createdBy?->code,
+                'created_by_code' => $order->createdBy?->username,
 
                 'paid_at' => $order->paid_at,
                 'paid_by' => $order->paid_by,
                 'paid_by_name' => $order->paidBy?->name,
-                'paid_by_code' => $order->paidBy?->code,
+                'paid_by_code' => $order->paidBy?->username,
 
                 'deleted_at' => $order->deleted_at,
                 'deleted_by' => $order->deleted_by,
                 'deleted_by_name' => $order->deletedBy?->name,
-                'deleted_by_code' => $order->deletedBy?->code,
+                'deleted_by_code' => $order->deletedBy?->username,
 
                 'porcentaje_comision' => $order->porcentaje_comision,
 
