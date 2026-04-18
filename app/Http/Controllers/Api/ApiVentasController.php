@@ -230,59 +230,82 @@ class ApiVentasController extends Controller
 
         $result = [];
 
-        foreach ($orders as $order) {
-            $details = [];
+        $result = $orders->map(function ($order) {
+            return $this->formatOrder($order);
+        });
 
-            foreach ($order->orderDetails as $detail) {
-                $details[] = [
-                    'id' => $detail->id,
-                    'loterie_id' => $detail->loterie_id,
-                    'loterie_nombre' => $detail->loterie->nombre ?? null,
+        return response()->json($result);
+    }
 
-                    'second_loterie_id' => $detail->second_loterie_id,
-                    'second_loterie_nombre' => $detail->secondLoterie->nombre ?? null,
+    private function formatOrder($order)
+    {
+        $details = [];
 
-                    'number' => $detail->number,
-                    'type' => $detail->type,
-                    'monto_jugada' => $detail->monto_jugada,
-                    'premiado' => $detail->premiado,
-                ];
-            }
+        foreach ($order->orderDetails as $detail) {
+            $details[] = [
+                'id' => $detail->id,
+                'loterie_id' => $detail->loterie_id,
+                'loterie_nombre' => $detail->loterie->nombre ?? null,
 
-            $result[] = [
-                'id' => $order->id,
-                'code' => $order->code,
-                'date' => $order->date,
-                'premiado' => $order->premiado,
+                'second_loterie_id' => $detail->second_loterie_id,
+                'second_loterie_nombre' => $detail->secondLoterie->nombre ?? null,
 
-                'created_by' => $order->created_by,
-                'created_by_name' => $order->createdBy?->name,
-                'created_by_code' => $order->createdBy?->username,
-
-                'paid_at' => $order->paid_at,
-                'paid_by' => $order->paid_by,
-                'paid_by_name' => $order->paidBy?->name,
-                'paid_by_code' => $order->paidBy?->username,
-
-                'deleted_at' => $order->deleted_at,
-                'created_at' => $order->created_at,
-                'deleted_by' => $order->deleted_by,
-                'deleted_by_name' => $order->deletedBy?->name,
-                'deleted_by_code' => $order->deletedBy?->username,
-
-                'porcentaje_comision' => $order->porcentaje_comision,
-
-                // 🔥 APPENDS
-                'total_venta_bruto' => $order->total_venta_bruto,
-                'total_comision' => $order->total_comision,
-                'total_neto' => $order->total_neto,
-                'total_premiado' => $order->total_premiado,
-                'qr_code' => $order->qr_code,
-
-                'details' => $details
+                'number' => $detail->number,
+                'type' => $detail->type,
+                'monto_jugada' => $detail->monto_jugada,
+                'premiado' => $detail->premiado,
             ];
         }
 
-        return response()->json($result);
+        return [
+            'id' => $order->id,
+            'code' => $order->code,
+            'date' => $order->date,
+            'premiado' => $order->premiado,
+
+            'created_by' => $order->created_by,
+            'created_by_name' => $order->createdBy?->name,
+            'created_by_code' => $order->createdBy?->username,
+
+            'paid_at' => $order->paid_at,
+            'paid_by' => $order->paid_by,
+            'paid_by_name' => $order->paidBy?->name,
+            'paid_by_code' => $order->paidBy?->username,
+
+            'deleted_at' => $order->deleted_at,
+            'created_at' => $order->created_at,
+            'deleted_by' => $order->deleted_by,
+            'deleted_by_name' => $order->deletedBy?->name,
+            'deleted_by_code' => $order->deletedBy?->username,
+
+            'porcentaje_comision' => $order->porcentaje_comision,
+
+            // APPENDS
+            'total_venta_bruto' => $order->total_venta_bruto,
+            'total_comision' => $order->total_comision,
+            'total_neto' => $order->total_neto,
+            'total_premiado' => $order->total_premiado,
+            'qr_code' => $order->qr_code,
+
+            'details' => $details
+        ];
+    }
+
+    public function findVenta($id)
+    {
+        $order = Order::with([
+            'orderDetails.loterie',
+            'orderDetails.secondLoterie',
+            'createdBy',
+            'paidBy',
+            'deletedBy'
+        ])
+            ->myCenter() // 🔥 aquí la condición
+            ->withTrashed()
+            ->findOrFail($id);
+
+        return response()->json(
+            $this->formatOrder($order)
+        );
     }
 }
