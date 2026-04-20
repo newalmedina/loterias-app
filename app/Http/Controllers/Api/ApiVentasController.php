@@ -253,6 +253,7 @@ class ApiVentasController extends Controller
                 'number' => $detail->number,
                 'type' => $detail->type,
                 'monto_jugada' => $detail->monto_jugada,
+                'monto_premio' => $detail->monto_premio,
                 'premiado' => $detail->premiado,
             ];
         }
