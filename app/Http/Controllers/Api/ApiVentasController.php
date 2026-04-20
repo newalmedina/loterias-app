@@ -199,9 +199,9 @@ class ApiVentasController extends Controller
         }
 
         // 🆕 FILTRO POR CREATED_BY
-        // if (!empty($request->created_by)) {
-        //     $query->where('created_by', $request->created_by);
-        // }
+        if (!empty($request->created_by)) {
+            $query->where('created_by', $request->created_by);
+        }
 
         // 🏆 FILTRO PREMIADOS / NO PREMIADOS
         if ($request->premiado !== null) {
@@ -260,21 +260,13 @@ class ApiVentasController extends Controller
         return [
             'id' => $order->id,
             'code' => $order->code,
+            'date' => $order->date,
+            // 'deleted_at' => $order->deleted_at,
+            // 'created_at' => $order->created_at,
+            // 'paid_at' => $order->paid_at,
 
-            'date' => $order->date ? Carbon::parse($order->date)->format('d-m-Y')
-                : null,,
-
-            'premiado' => $order->premiado,
-
-            'created_by' => $order->created_by,
-            'created_by_name' => $order->createdBy?->name,
-            'created_by_code' => $order->createdBy?->username,
-
-            // =========================
-            // FECHAS FORMATEADAS
-            // =========================
-            'paid_at' => $order->paid_at
-                ? Carbon::parse($order->paid_at)->format('d-m-Y')
+            'date' => $order->date
+                ? Carbon::parse($order->date)->format('d-m-Y')
                 : null,
 
             'deleted_at' => $order->deleted_at
@@ -285,9 +277,15 @@ class ApiVentasController extends Controller
                 ? Carbon::parse($order->created_at)->format('d-m-Y')
                 : null,
 
-            // =========================
-            // USUARIOS
-            // =========================
+            'paid_at' => $order->paid_at
+                ? Carbon::parse($order->paid_at)->format('d-m-Y')
+                : null,
+            'premiado' => $order->premiado,
+
+            'created_by' => $order->created_by,
+            'created_by_name' => $order->createdBy?->name,
+            'created_by_code' => $order->createdBy?->username,
+
             'paid_by' => $order->paid_by,
             'paid_by_name' => $order->paidBy?->name,
             'paid_by_code' => $order->paidBy?->username,
@@ -296,11 +294,9 @@ class ApiVentasController extends Controller
             'deleted_by_name' => $order->deletedBy?->name,
             'deleted_by_code' => $order->deletedBy?->username,
 
-            // =========================
-            // OTROS CAMPOS
-            // =========================
             'porcentaje_comision' => $order->porcentaje_comision,
 
+            // APPENDS
             'total_venta_bruto' => $order->total_venta_bruto,
             'total_comision' => $order->total_comision,
             'total_neto' => $order->total_neto,
