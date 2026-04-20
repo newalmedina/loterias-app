@@ -260,27 +260,46 @@ class ApiVentasController extends Controller
         return [
             'id' => $order->id,
             'code' => $order->code,
+
             'date' => $order->date,
+
             'premiado' => $order->premiado,
 
             'created_by' => $order->created_by,
             'created_by_name' => $order->createdBy?->name,
             'created_by_code' => $order->createdBy?->username,
 
-            'paid_at' => $order->paid_at,
+            // =========================
+            // FECHAS FORMATEADAS
+            // =========================
+            'paid_at' => $order->paid_at
+                ? Carbon::parse($order->paid_at)->format('d-m-Y')
+                : null,
+
+            'deleted_at' => $order->deleted_at
+                ? Carbon::parse($order->deleted_at)->format('d-m-Y')
+                : null,
+
+            'created_at' => $order->created_at
+                ? Carbon::parse($order->created_at)->format('d-m-Y')
+                : null,
+
+            // =========================
+            // USUARIOS
+            // =========================
             'paid_by' => $order->paid_by,
             'paid_by_name' => $order->paidBy?->name,
             'paid_by_code' => $order->paidBy?->username,
 
-            'deleted_at' => $order->deleted_at,
-            'created_at' => $order->created_at,
             'deleted_by' => $order->deleted_by,
             'deleted_by_name' => $order->deletedBy?->name,
             'deleted_by_code' => $order->deletedBy?->username,
 
+            // =========================
+            // OTROS CAMPOS
+            // =========================
             'porcentaje_comision' => $order->porcentaje_comision,
 
-            // APPENDS
             'total_venta_bruto' => $order->total_venta_bruto,
             'total_comision' => $order->total_comision,
             'total_neto' => $order->total_neto,
