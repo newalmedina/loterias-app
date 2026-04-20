@@ -199,9 +199,9 @@ class ApiVentasController extends Controller
         }
 
         // 🆕 FILTRO POR CREATED_BY
-        if (!empty($request->created_by)) {
-            $query->where('created_by', $request->created_by);
-        }
+        // if (!empty($request->created_by)) {
+        //     $query->where('created_by', $request->created_by);
+        // }
 
         // 🏆 FILTRO PREMIADOS / NO PREMIADOS
         if ($request->premiado !== null) {
@@ -261,7 +261,8 @@ class ApiVentasController extends Controller
             'id' => $order->id,
             'code' => $order->code,
 
-            'date' => $order->date,
+            'date' => $order->date ? Carbon::parse($order->date)->format('d-m-Y')
+                : null,,
 
             'premiado' => $order->premiado,
 
