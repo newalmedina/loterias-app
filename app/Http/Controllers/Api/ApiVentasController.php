@@ -315,6 +315,8 @@ class ApiVentasController extends Controller
             'id' => $order->id,
             'code' => $order->code,
             'date' => $order->date,
+            'can_pay' => $order->can_pay,
+            'can_delete' => $order->can_delete,
             // 'deleted_at' => $order->deleted_at,
             // 'created_at' => $order->created_at,
             // 'paid_at' => $order->paid_at,

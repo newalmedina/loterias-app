@@ -191,13 +191,7 @@ class Order extends Model
     }
     public function getCanDeleteAttribute()
     {
-        //validar si aun le faltan los 10 min para tirar la loteria
-        $date = now();
-
-        $horaFinDate = Carbon::parse($this->created_at)
-            ->addMinutes(10);
-
-        return $date->lt($horaFinDate);
+        return $this->created_at->diffInMinutes(now()) < 10;
     }
     public function getCanPayAttribute()
     {
