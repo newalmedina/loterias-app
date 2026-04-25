@@ -34,6 +34,8 @@ Route::middleware(['auth:sanctum', 'check.active'])->group(function () {
 
     Route::get('validate-token', [ApiAuthController::class, 'validateToken']);
     Route::post('/ventas/finalizar', [ApiVentasController::class, 'finalizarVenta']);
+    Route::patch('/ventas/pagar/{id}', [ApiVentasController::class, 'pagarVenta']);
+    Route::delete('/ventas/delete/{id}', [ApiVentasController::class, 'eliminarVenta']);
     Route::get('/ventas/search-venta', [ApiVentasController::class, 'searchVenta']);
     Route::get('/ventas/find/{id}', [ApiVentasController::class, 'findVenta']);
 

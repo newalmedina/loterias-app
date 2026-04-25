@@ -25,6 +25,8 @@ class Order extends Model
         'total_neto',
         'total_premiado',
         'qr_code',
+        'can_delete',
+        'can_pay',
 
         'premiado', // 👈 NUEVO
     ];
@@ -186,5 +188,23 @@ class Order extends Model
         $svg = QrCode::size(200)->generate('Make me into a QrCode!');
 
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
+    }
+    public function getCanDeleteAttribute()
+    {
+        //validar si aun le faltan los 10 min para tirar la loteria
+        $date = now();
+
+        $horaFinDate = Carbon::parse($this->created_at)
+            ->addMinutes(10);
+
+        return $date->lt($horaFinDate);
+    }
+    public function getCanPayAttribute()
+    {
+        //validar si aun le faltan los 10 min para tirar la loteria
+        if ($this->premiado && empty($this->paid_at)) {
+            return true;
+        }
+        return false;
     }
 }

@@ -132,6 +132,59 @@ class ApiVentasController extends Controller
         ]);
     }
 
+    public function pagarVenta(Request $request, $id)
+    {
+
+        $order = Order::myCenter()
+            ->findOrFail($id);
+
+        if (!$order->premiado) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Esta venta no esta premiada para proceder al pago ',
+            ]);
+        }
+        if ($order->can_pay) {
+
+            $order->paid_at = Carbon::now('Europe/Madrid');
+            $order->paid_by = Auth::user()->id;
+            $order->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Venta pagada correctamente',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Esta venta ya ha sido pagada',
+            ]);
+        }
+    }
+
+    public function eliminarVenta(Request $request, $id)
+    {
+
+        //validar errores
+        $order = Order::myCenter()
+            ->findOrFail($id);
+
+        if ($order->can_delete) {
+
+            $order->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Venta anulada correctamente',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Esta venta ya no se puede anular',
+            ]);
+        }
+    }
+
     public function searchVenta(Request $request)
     {
         $onlyTrash = $request->boolean('onlyTrash', false);
