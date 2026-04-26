@@ -258,14 +258,22 @@ class ApiVentasController extends Controller
 
         // 🏆 FILTRO PREMIADOS / NO PREMIADOS
         if ($request->has('premiado')) {
-            $query->whereHas('orderDetails', function ($q) use ($request) {
-                $q->where('premiado', (int)$request->premiado);
-            });
+
+            if ((int)$request->premiado === 1) {
+                $query->whereHas('orderDetails', function ($q) {
+                    $q->where('premiado', 1);
+                });
+            } else {
+                $query->whereDoesntHave('orderDetails', function ($q) {
+                    $q->where('premiado', 1);
+                });
+            }
         }
 
 
         // 💰 FILTRO PAGADOS / NO PAGADOS
         if ($request->has('pagado')) {
+
             if ((int)$request->pagado === 1) {
                 $query->whereNotNull('paid_at');
             } else {
