@@ -187,7 +187,7 @@ class ApiVentasController extends Controller
 
     public function searchVenta(Request $request)
     {
-        $onlyTrash = $request->boolean('onlyTrash', false);
+        $onlyTrash = filter_var($request->onlyTrash, FILTER_VALIDATE_BOOLEAN);
         $query = Order::query()
             ->with([
                 'orderDetails' => function ($q) use ($request) {
@@ -257,21 +257,16 @@ class ApiVentasController extends Controller
         }
 
         // 🏆 FILTRO PREMIADOS / NO PREMIADOS
-        if ($request->premiado !== null) {
-            if ($request->premiado) {
-                $query->whereHas('orderDetails', function ($q) {
-                    $q->where('premiado', 1);
-                });
-            } else {
-                $query->whereDoesntHave('orderDetails', function ($q) {
-                    $q->where('premiado', 0);
-                });
-            }
+        if ($request->has('premiado')) {
+            $query->whereHas('orderDetails', function ($q) use ($request) {
+                $q->where('premiado', (int)$request->premiado);
+            });
         }
 
+
         // 💰 FILTRO PAGADOS / NO PAGADOS
-        if ($request->pagado !== null) {
-            if ($request->pagado) {
+        if ($request->has('pagado')) {
+            if ((int)$request->pagado === 1) {
                 $query->whereNotNull('paid_at');
             } else {
                 $query->whereNull('paid_at');
