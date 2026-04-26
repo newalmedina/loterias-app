@@ -257,7 +257,7 @@ class ApiVentasController extends Controller
         }
 
         // 🏆 FILTRO PREMIADOS / NO PREMIADOS
-        if ($request->has('premiado')) {
+        if ($request->premiado !== null) {
 
             if ((int)$request->premiado === 1) {
                 $query->whereHas('orderDetails', function ($q) {
@@ -272,7 +272,7 @@ class ApiVentasController extends Controller
 
 
         // 💰 FILTRO PAGADOS / NO PAGADOS
-        if ($request->has('pagado')) {
+        if ($request->pagado !== null) {
 
             if ((int)$request->pagado === 1) {
                 $query->whereNotNull('paid_at');
