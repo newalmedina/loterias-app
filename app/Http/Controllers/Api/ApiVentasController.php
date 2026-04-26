@@ -278,7 +278,9 @@ class ApiVentasController extends Controller
                 $query->whereNotNull('paid_at');
             } else {
                 $query->whereNull('paid_at');
-                $query->where('premiado', 1);
+                $query->whereHas('orderDetails', function ($q) {
+                    $q->where('premiado', 1);
+                });
             }
         }
 
