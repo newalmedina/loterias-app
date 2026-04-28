@@ -311,6 +311,7 @@ class ApiVentasController extends Controller
                 'second_loterie_nombre' => $detail->secondLoterie->nombre ?? null,
 
                 'number' => $detail->number,
+                'number_formatted' => $detail->number_formatted,
                 'type' => $detail->type,
                 'monto_jugada' => $detail->monto_jugada,
                 'monto_premio' => $detail->monto_premio,
