@@ -305,6 +305,7 @@ class ApiVentasController extends Controller
                 'id' => $detail->id,
                 'loterie_id' => $detail->loterie_id,
                 'loterie_nombre' => $detail->loterie->nombre ?? null,
+                'short_name' => $detail->loterie->short_name ?? null,
 
                 'second_loterie_id' => $detail->second_loterie_id,
                 'second_loterie_nombre' => $detail->secondLoterie->nombre ?? null,
