@@ -147,22 +147,22 @@ class ApiVentasController extends Controller
 
     public function findByUuid($uuid)
     {
-        $order = Order::myCenter() // 🔥 aquí la condición
+        $order = Order::myCenter()
+            ->where("uuid", $uuid)
+            ->first();
 
-            ->where("uuid", $uuid)->first();
-
-
-
-        if ($order) {
-            return response()->json(
-                $this->formatOrder($order)
-            );
-        } else {
+        if (!$order) {
             return response()->json([
                 'success' => false,
                 'message' => 'Esta venta no existe',
-            ]);
+                'data' => null
+            ], 404);
         }
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->formatOrder($order),
+        ]);
     }
 
     private function formatOrder($order)
