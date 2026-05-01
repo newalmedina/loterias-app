@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum', 'check.active'])->group(function () {
     Route::delete('/ventas/delete/{id}', [ApiVentasController::class, 'eliminarVenta']);
     Route::get('/ventas/search-venta', [ApiVentasController::class, 'searchVenta']);
     Route::get('/ventas/find/{id}', [ApiVentasController::class, 'findVenta']);
+    Route::get('/ventas/find-uuid/{uuid}', [ApiVentasController::class, 'findByUuid']);
 
     Route::post('logout', [ApiAuthController::class, 'logout']);
     // Route::get(

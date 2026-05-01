@@ -189,10 +189,48 @@ class Order extends Model
 
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
+
     public function getCanDeleteAttribute()
     {
-        return $this->created_at->diffInMinutes(now()) < 10;
+
+        // ⏱️ 1. Validar tiempo (máx 10 min)
+        if ($this->created_at->diffInMinutes(now()) >= 10) {
+            return false;
+        }
+
+        // 📦 2. Cargar detalles con loterías
+        $this->loadMissing('orderDetails.loterie', 'orderDetails.secondLoterie');
+
+        foreach ($this->orderDetails as $detail) {
+
+            // 🔹 verificar lotería principal
+            if ($detail->loterie_id) {
+                $hasResult = \App\Models\LoterieResults::where('loterie_id', $detail->loterie_id)
+                    ->whereDate('date', now()->toDateString())
+                    ->exists();
+
+                if ($hasResult) {
+                    return false;
+                }
+            }
+
+            // 🔹 verificar segunda lotería (si existe)
+            if ($detail->second_loterie_id) {
+                $hasResult = \App\Models\LoterieResults::where('loterie_id', $detail->second_loterie_id)
+                    ->whereDate('date', now()->toDateString())
+                    ->exists();
+
+                if ($hasResult) {
+                    return false;
+                }
+            }
+        }
+
+        // ✅ si pasa todo
+        return true;
     }
+
+
     public function getCanPayAttribute()
     {
         //validar si aun le faltan los 10 min para tirar la loteria
