@@ -169,13 +169,9 @@ class ApiVentasController extends Controller
     public function userTicketsCanShow()
     {
         $user = Auth::user();
-        dd($user);
 
         // Si no tiene permiso, devuelve vacío
-        if ($user->show_all_orders) {
-            $users = User::where('center_id', $user->center_id)
-                ->get();
-        } else {
+        if (!$user->show_all_orders || !$user->center_id) {
             return response()->json([
                 'success' => true,
                 'data' => [],
@@ -183,9 +179,11 @@ class ApiVentasController extends Controller
         }
 
         // Buscar usuarios del mismo centro (excepto el mismo usuario)
+        $users = User::where('center_id', $user->center_id)
+            ->get();
+
         return response()->json([
             'success' => true,
-            'permiso' => $user->show_all_orders,
             'data' => $users,
         ]);
     }
