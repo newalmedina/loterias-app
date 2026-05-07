@@ -168,7 +168,11 @@ class ApiVentasController extends Controller
     public function userTicketsCanShow()
     {
         $authenticatedUser = Auth::user();
-
+        dd([
+            'auth_user_id' => $authenticatedUser->id,
+            'center_id' => $authenticatedUser->center_id,
+            'center_relation' => $authenticatedUser->center,
+        ]);
         if (!$authenticatedUser->show_all_orders) {
             $users = [];
         } else {
