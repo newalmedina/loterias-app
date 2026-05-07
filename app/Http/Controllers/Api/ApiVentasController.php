@@ -170,11 +170,12 @@ class ApiVentasController extends Controller
     {
         $user = Auth::user();
 
-        $users = User::where('center_id', $user->center_id)
-            ->get();
-        dd($users, $user->center_id);
+
         // Si no tiene permiso, devuelve vacío
-        if (!$user->show_all_orders) {
+        if ($user->show_all_orders) {
+            $users = User::where('center_id', $user->center_id)
+                ->get();
+        } else {
             return response()->json([
                 'success' => true,
                 'data' => [],
@@ -184,6 +185,7 @@ class ApiVentasController extends Controller
         // Buscar usuarios del mismo centro (excepto el mismo usuario)
         return response()->json([
             'success' => true,
+            'permiso' => $user->show_all_orders,
             'data' => $users,
         ]);
     }
