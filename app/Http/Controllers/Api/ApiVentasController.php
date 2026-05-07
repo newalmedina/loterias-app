@@ -171,7 +171,7 @@ class ApiVentasController extends Controller
         $user = Auth::user();
 
         // Si no tiene permiso, devuelve vacío
-        if (!$user->show_all_orders || !$user->center_id) {
+        if (!$user->show_all_orders) {
             return response()->json([
                 'success' => true,
                 'data' => [],
