@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Loterie;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\User;
 use App\Models\Venta;
 use App\Models\VentaDetalle;
 use Carbon\Carbon;
@@ -167,19 +168,20 @@ class ApiVentasController extends Controller
 
     public function userTicketsCanShow()
     {
-        $authenticatedUser = Auth::user();
-        dd([
-            'auth_user_id' => $authenticatedUser->id,
-            'center_id' => $authenticatedUser->center_id,
-            'center_relation' => $authenticatedUser->center,
-        ]);
-        if (!$authenticatedUser->show_all_orders) {
-            $users = [];
-        } else {
-            $users = $authenticatedUser->center
-                ? $authenticatedUser->center->users()->get()
-                : [];
+        $user = Auth::user();
+
+        // Si no tiene permiso, devuelve vacío
+        if (!$user->show_all_orders || !$user->center_id) {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+            ]);
         }
+
+        // Buscar usuarios del mismo centro (excepto el mismo usuario)
+        $users = User::where('center_id', $user->center_id)
+            ->where('id', '!=', $user->id)
+            ->get();
 
         return response()->json([
             'success' => true,
