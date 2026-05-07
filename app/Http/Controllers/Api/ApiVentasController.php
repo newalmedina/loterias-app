@@ -169,7 +169,7 @@ class ApiVentasController extends Controller
     public function userTicketsCanShow()
     {
         $user = Auth::user();
-
+        dd($user);
 
         // Si no tiene permiso, devuelve vacío
         if ($user->show_all_orders) {
