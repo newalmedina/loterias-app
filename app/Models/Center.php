@@ -19,6 +19,10 @@ class Center extends Model
     {
         return $this->hasMany(CenterLoterie::class);
     }
+    public function users()
+    {
+        return $this->hasMany(User::class, 'center_id');
+    }
 
     protected static function booted()
     {

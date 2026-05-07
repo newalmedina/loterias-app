@@ -165,6 +165,24 @@ class ApiVentasController extends Controller
         ]);
     }
 
+    public function userTicketsCanShow()
+    {
+        $authenticatedUser = Auth::user();
+
+        if (!$authenticatedUser->show_all_orders) {
+            $users = [];
+        } else {
+            $users = $authenticatedUser->center
+                ? $authenticatedUser->center->users()->get()
+                : [];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $users,
+        ]);
+    }
+
     private function formatOrder($order)
     {
         $details = [];

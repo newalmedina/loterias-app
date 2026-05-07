@@ -84,10 +84,12 @@ class User extends Authenticatable implements FilamentUser
             }
         });
     }
+
     public function scopeMyCenter($query)
     {
         return $query->where('users.center_id', Auth::user()->center_id);
     }
+
     public function country()
     {
         return $this->belongsTo(Country::class);

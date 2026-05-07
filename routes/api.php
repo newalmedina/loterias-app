@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'check.active'])->group(function () {
     Route::get('/ventas/search-venta', [ApiVentasController::class, 'searchVenta']);
     Route::get('/ventas/find/{id}', [ApiVentasController::class, 'findVenta']);
     Route::get('/ventas/find-uuid/{uuid}', [ApiVentasController::class, 'findByUuid']);
+    Route::get('/ventas/user-can-show', [ApiVentasController::class, 'userTicketsCanShow']);
 
     Route::post('logout', [ApiAuthController::class, 'logout']);
     // Route::get(
