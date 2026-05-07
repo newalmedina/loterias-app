@@ -167,14 +167,26 @@ class ApiVentasController extends Controller
 
     public function userTicketsCanShow()
     {
-        $authenticatedUser = Auth::user();
+        $user = Auth::user();
 
-        if (!$authenticatedUser->show_all_orders) {
-            $users = [];
-        } else {
-            $users = $authenticatedUser->center
-                ? $authenticatedUser->center->users()->get()
-                : [];
+        if (!$user->show_all_orders || !$user->center) {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+            ]);
+        }
+
+        $users = $user->center
+            ->users()
+            ->where('id', '!=', $user->id)
+            ->get();
+
+        // si después de excluirte no queda nadie, retorna []
+        if ($users->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+            ]);
         }
 
         return response()->json([
