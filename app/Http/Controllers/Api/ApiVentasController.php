@@ -181,7 +181,7 @@ class ApiVentasController extends Controller
         // Buscar usuarios del mismo centro (excepto el mismo usuario)
         $users = User::where('center_id', $user->center_id)
             ->get();
-
+        dd($users, $user->center_id);
         return response()->json([
             'success' => true,
             'data' => $users,
