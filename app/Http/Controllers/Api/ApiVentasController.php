@@ -88,6 +88,11 @@ class ApiVentasController extends Controller
             $query->where('created_by', $request->created_by);
         }
 
+        // 👤 FILTRO POR USERS (orders.created_by)
+        if (!empty($request->users)) {
+            $query->whereIn('orders.created_by', $request->users);
+        }
+
         // 🏆 FILTRO PREMIADOS / NO PREMIADOS
         if ($request->premiado !== null) {
 
