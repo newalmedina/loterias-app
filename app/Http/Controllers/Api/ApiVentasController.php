@@ -89,8 +89,22 @@ class ApiVentasController extends Controller
         }
 
         // 👤 FILTRO POR USERS (orders.created_by)
+        // 👤 NORMALIZAR USERS
+        $users = [];
+
         if (!empty($request->users)) {
-            $query->whereIn('orders.created_by', $request->users);
+            $users = is_array($request->users)
+                ? collect($request->users)
+                ->flatMap(fn($u) => explode(',', $u))
+                ->filter()
+                ->values()
+                ->toArray()
+                : explode(',', $request->users);
+        }
+
+        // 👤 FILTRO POR USERS (orders.created_by)
+        if (!empty($users)) {
+            $query->whereIn('orders.created_by', $users);
         }
 
         // 🏆 FILTRO PREMIADOS / NO PREMIADOS
