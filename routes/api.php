@@ -26,7 +26,10 @@ Route::post('login', [ApiAuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', 'check.active'])->group(function () {
     Route::get('user', [ApiAuthController::class, 'userInformation']);
-
+    Route::post(
+        'update-profile',
+        [ApiAuthController::class, 'updateProfile']
+    );
 
     Route::get('/loteries/get-loteries', [ApiLoteriesController::class, 'getLoteries']);
     Route::get('/loteries/get-center-loteries-disponibles', [ApiLoteriesController::class, 'getCenterLoteriesDisponibles']);

@@ -61,7 +61,50 @@ class ApiAuthController extends Controller
             ]);
         }
     }
+    public function updateProfile(Request $request)
+    {
+        try {
+            $user = $request->user();
 
+            // ================= VALIDACIÓN =================
+            $request->validate([
+                'name' => 'required|string|max:255',
+
+                'password' => [
+                    'nullable',
+                    'string',
+                    'min:6',
+                    'confirmed'
+                ],
+            ]);
+
+            // ================= ACTUALIZAR =================
+            $user->name = $request->name;
+
+            // PASSWORD SOLO SI VIENE
+            if (!empty($request->password)) {
+                $user->password = bcrypt($request->password);
+            }
+
+            $user->save();
+
+            return response()->json([
+                'code' => 200,
+                'message' => 'Perfil actualizado correctamente',
+                'user' => $user
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'code' => 422,
+                'message' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
     // INFORMACIÓN DEL USUARIO
     public function userInformation(Request $request)
     {
