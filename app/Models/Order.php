@@ -185,7 +185,7 @@ class Order extends Model
 
     public function getQrCodeAttribute()
     {
-        $svg = QrCode::size(200)->generate('Make me into a QrCode!');
+        $svg = QrCode::size(200)->generate($this->uuid);
 
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
