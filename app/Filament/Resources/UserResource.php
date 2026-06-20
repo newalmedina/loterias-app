@@ -149,7 +149,7 @@ class UserResource extends Resource
                                             ->inline(false)
                                             ->label("¿Permir Ingresar administración?")
                                             ->required(),
-                                        Forms\Components\Toggle::make('can_adshow_all_ordersmin_panel')
+                                        Forms\Components\Toggle::make('show_all_orders')
                                             ->inline(false)
                                             ->label("¿Mostrar todas las ventas?")
                                             ->required(),
