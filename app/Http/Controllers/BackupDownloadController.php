@@ -17,7 +17,7 @@ class BackupDownloadController extends Controller
         $disk = Storage::disk(config('backup.backup.destination.disks')[0]);
 
         if (! $disk->exists($filepath)) {
-            abort(404);
+       //     abort(404);
         }
 
         return response()->download($disk->path($filepath));
