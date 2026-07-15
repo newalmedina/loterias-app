@@ -12,7 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class PremiosDoScraperService
 {
     protected string $baseUrl = 'https://premios.do/resultados-loterias-';
-
+    public    $slugList = [];
     public function scrapeDate(Carbon $date)
     {
         $url = $this->baseUrl . $date->format('Y-m-d');
@@ -46,19 +46,51 @@ class PremiosDoScraperService
             $allowed = [
                 'anguilla-8am',
                 'anguilla-9am',
-                // 'anguilla-10am',
+                'anguilla-10am',
                 'anguilla-11am',
                 'anguilla-12pm',
-                // 'anguilla-1pm',
+                'anguilla-1pm',
                 'anguilla-2pm',
                 'anguilla-3pm',
                 'anguilla-4pm',
                 'anguilla-5pm',
-                // 'anguilla-6pm',
+                'anguilla-6pm',
                 'anguilla-7pm',
                 'anguilla-8pm',
-                // 'anguilla-9pm',
+                'anguilla-9pm',
+                'anguilla-10pm',
+                'nacional-noche',
+                'gana-mas',
+                'pega-3-mas',
+                'leidsa',
+                // 'haiti-bolet-930-am',
+                // 'haiti-bolet-1030-am',
+                // 'haiti-bolet-1130-am',
+                // 'haiti-bolet-530-pm',
+                // 'haiti-bolet-630-pm',
+                // 'haiti-bolet-730-pm',
+                'la-primera',
+                'la-primera-noche',
+                'la-suerte',
+                'la-suerte-6pm',
+                'lotedom',
+                'loteka',
+                'real',
+                'king-lottery-dia',
+                'king-lottery-noche',
+                'georgia-dia',
+                'georgia-tarde',
+                'georgia-noche',
+                'new-jersey-tarde',
+                'new-jersey-noche',
+                'new-york-tarde',
+                'new-york-noche',
+                'florida-tarde',
+                'florida-noche',
             ];
+            if (!in_array($loterieSlug, $this->slugList)) {
+                $this->slugList[] = $loterieSlug;
+            }
 
             if (!in_array($loterieSlug, $allowed)) {
                 return; // "continue"
@@ -106,12 +138,13 @@ class PremiosDoScraperService
                 ]
             );
 
+
             $resultsSaved[] = [
                 'status' => 'success',
                 'message' => "Guardado: {$loterie->nombre} - " . implode(',', $numbers)
             ];
         });
-
+        // dd($this->slugList);
         return [
             'success' => true,
             'results' => $resultsSaved
