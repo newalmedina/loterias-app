@@ -53,10 +53,10 @@ class DatabaseSeeder extends Seeder
 
 
         // Llamar al comando con los parámetros
-        \Artisan::call('loteries:populate-dominican-special', [
+        /*\Artisan::call('loteries:populate-dominican-special', [
             '--start' => $startDate,
             '--end'   => $endDate,
-        ]);
+        ]);*/
 
         $startDate = Carbon::now()->startOfMonth()->toDateString(); // ej: 2026-01-01
         \Artisan::call('scrape:loterie-results', [
