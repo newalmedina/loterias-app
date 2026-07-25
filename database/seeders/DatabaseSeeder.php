@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory()->create([
             'name' => 'Administrador',
             'email' => 'ing.newal.medina@gmail.com',
+            'username' => "23479",
             'super_admin' => 1,
             'can_admin_panel' => 1,
             'change_password' => 0,
