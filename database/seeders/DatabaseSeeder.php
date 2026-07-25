@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             'super_admin' => 1,
             'can_admin_panel' => 1,
             'change_password' => 0,
-            'password' => Hash::make("Secret15"),
+            'password' => Hash::make("EithanSteven15*"),
         ]);
 
         // $this->call(UnitOfMeasureSeeder::class);
