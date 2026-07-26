@@ -20,7 +20,7 @@ class PopulateDominicanLoterieSpecialDates extends Command
     protected $description = 'Popula la tabla loterie_special_dates para las loterías dominicanas incluyendo días no disponibles y horarios especiales dinámicos.';
 
     // Horarios especiales usando slugs
-    protected $specialDates = [
+    /*protected $specialDates = [
         '12-24' => [
             'quiniela-real' => ['12:55:00'],
             'quiniela-loteka' => ['17:00:00'],
@@ -85,6 +85,108 @@ class PopulateDominicanLoterieSpecialDates extends Command
             'gana-mas' => 'not_enable',
             'quiniela-leidsa' => 'not_enable',
         ],
+    ];*/
+
+    protected $specialDates = [
+
+        '12-24' => [
+
+            'real' => ['12:55:00'],
+            'loteka' => ['17:00:00'],
+            'lotedom' => ['14:55:00'],
+
+            'la-primera' => ['12:00:00'],
+            'la-primera-noche' => ['20:00:00'],
+
+            'la-suerte' => ['12:30:00'],
+
+            'new-york-tarde' => ['14:30:00'],
+            'new-york-noche' => ['22:30:00'],
+
+            'anguilla-10am' => ['10:00:00'],
+            'anguilla-1pm' => ['13:00:00'],
+            'anguilla-6pm' => ['18:00:00'],
+
+            'king-lottery-dia' => ['12:30:00'],
+            'king-lottery-noche' => ['19:30:00'],
+
+            'florida-tarde' => ['13:30:00'],
+            'florida-noche' => ['21:45:00'],
+
+            'nacional-noche' => 'not_enable',
+            'gana-mas' => 'not_enable',
+            'leidsa' => 'not_enable',
+        ],
+
+        '12-25' => [
+
+            'real' => ['12:55:00'],
+            'lotedom' => ['14:55:00'],
+
+            'la-primera' => ['12:00:00'],
+
+            'la-suerte' => ['12:30:00'],
+
+            'new-york-tarde' => ['14:30:00'],
+            'new-york-noche' => ['22:30:00'],
+
+            'florida-tarde' => ['13:30:00'],
+            'florida-noche' => ['21:45:00'],
+
+            'nacional-noche' => 'not_enable',
+            'gana-mas' => 'not_enable',
+            'leidsa' => 'not_enable',
+        ],
+
+        '12-31' => [
+
+            'real' => ['12:55:00'],
+            'loteka' => ['17:00:00'],
+            'lotedom' => ['14:55:00'],
+
+            'la-primera' => ['12:00:00'],
+            'la-primera-noche' => ['20:00:00'],
+
+            'la-suerte' => ['12:30:00'],
+
+            'new-york-tarde' => ['14:30:00'],
+            'new-york-noche' => ['22:30:00'],
+
+            'anguilla-10am' => ['10:00:00'],
+            'anguilla-1pm' => ['13:00:00'],
+            'anguilla-6pm' => ['18:00:00'],
+
+            'king-lottery-dia' => ['12:30:00'],
+            'king-lottery-noche' => ['19:30:00'],
+
+            'florida-tarde' => ['13:30:00'],
+            'florida-noche' => ['21:45:00'],
+
+            'nacional-noche' => 'not_enable',
+            'gana-mas' => 'not_enable',
+            'leidsa' => 'not_enable',
+        ],
+
+        '01-01' => [
+
+            'real' => ['12:55:00'],
+            'lotedom' => ['14:55:00'],
+
+            'la-primera' => ['12:00:00'],
+
+            'la-suerte' => ['12:30:00'],
+
+            'new-york-tarde' => ['14:30:00'],
+            'new-york-noche' => ['22:30:00'],
+
+            'florida-tarde' => ['13:30:00'],
+            'florida-noche' => ['21:45:00'],
+
+            'nacional-noche' => 'not_enable',
+            'gana-mas' => 'not_enable',
+            'leidsa' => 'not_enable',
+        ],
+
     ];
 
     public function handle()
