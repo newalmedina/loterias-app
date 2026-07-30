@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Setting extends Model
 {
@@ -63,19 +64,29 @@ class Setting extends Model
 
             $object = (object) $cleanData;
 
-            // Convertir imagen a base64 si existe
+            // Convertir imagen a base64 y obtener URL pública si existe
             if (!empty($object->image)) {
+
                 $imagePath = storage_path('app/public/' . $object->image);
 
+                // URL pública
+                $object->image_url = url(Storage::url($object->image));
+
                 if (is_file($imagePath)) {
+
                     $imageData = base64_encode(file_get_contents($imagePath));
-                    $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
+                    $extension = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
+
                     $object->image_base64 = 'data:image/' . $extension . ';base64,' . $imageData;
                 } else {
+
                     $object->image_base64 = null;
+                    $object->image_url = null;
                 }
             } else {
+
                 $object->image_base64 = null;
+                $object->image_url = null;
             }
             // dd($object);
             // 👉 Agregar full_address al objeto
