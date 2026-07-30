@@ -166,7 +166,7 @@ class PremiosDoScraperService
                     'nombre' => $loterieName,
                     'code' => $loterieSlug,
                     'active' => 1,
-                    'image' => $imagePath,
+                    // 'image' => $imagePath,
                     'time_zone' => 'America/Santo_Domingo',
                 ]
             );
