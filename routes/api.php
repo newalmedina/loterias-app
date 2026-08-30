@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ApiLoteriesController;
 use App\Http\Controllers\AppiAppointmentController;
 use App\Http\Controllers\Api\ApiAuthController;
+use App\Http\Controllers\Api\ApiUsersController;
 use App\Http\Controllers\Api\ApiVentasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,8 @@ Route::middleware(['auth:sanctum', 'check.active'])->group(function () {
         'update-profile',
         [ApiAuthController::class, 'updateProfile']
     );
+    Route::get('/users/center-ventas', [ApiUsersController::class, 'getUserCenterVentas']);
+
 
     Route::get('/loteries/get-loteries', [ApiLoteriesController::class, 'getLoteries']);
     Route::get('/loteries/get-center-loteries-disponibles', [ApiLoteriesController::class, 'getCenterLoteriesDisponibles']);
